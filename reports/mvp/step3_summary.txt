@@ -1,0 +1,47 @@
+===== MVP BƯỚC 3: BASELINE + MÔ HÌNH (cửa sổ 5 phút, đặc trưng bộ A) =====
+Số đặc trưng: 18  |  train 2,476 (alert 112)  val 620 (alert 12)  test 3,096 (alert 24)
+
+(a) Học trên TRAIN, đo trên VAL  — chỉ để kiểm tra sơ bộ, KHÔNG dùng để chọn mô hình
+  phương pháp nhóm        TP    FP   FN Precision  Recall     F1     FPR
+  ----------------------------------------------------------------------
+  rule_fatal  luật        12    10    0     0.545   1.000  0.706  0.0164
+  mad_logs    không GS     0     0   12     0.000   0.000  0.000  0.0000
+  iforest     không GS     8     6    4     0.571   0.667  0.615  0.0099
+  logreg      có GS       11     6    1     0.647   0.917  0.759  0.0099
+  rforest     có GS       11     6    1     0.647   0.917  0.759  0.0099
+
+(b) Học lại trên TRAIN + VAL, đo trên TEST  — KẾT QUẢ CHÍNH THỨC
+  phương pháp nhóm        TP    FP   FN Precision  Recall     F1     FPR
+  ----------------------------------------------------------------------
+  rule_fatal  luật        24    49    0     0.329   1.000  0.495  0.0160
+  mad_logs    không GS     0     0   24     0.000   0.000  0.000  0.0000
+  iforest     không GS    13    28   11     0.317   0.542  0.400  0.0091
+  logreg      có GS       24    49    0     0.329   1.000  0.495  0.0160
+  rforest     có GS       24    26    0     0.480   1.000  0.649  0.0085
+
+  Precision = trong các cảnh báo, bao nhiêu % đúng  |  Recall = trong các cửa sổ alert, bắt được bao nhiêu %
+  FPR = tỷ lệ cửa sổ bình thường bị báo nhầm
+
+Recall theo LOẠI alert trên test (số cửa sổ chứa loại đó được cảnh báo / tổng):
+  loại       đã gặp?  số cửa sổ rule_fatal   mad_logs    iforest     logreg    rforest
+  APPALLOC   CHƯA             2      2/2        0/2        2/2        2/2        2/2  
+  APPCHILD   CHƯA             1      1/1        0/1        1/1        1/1        1/1  
+  APPREAD    có               4      4/4        0/4        4/4        4/4        4/4  
+  KERNMC     có              10     10/10       0/10       1/10      10/10      10/10 
+  KERNRTSP   có              12     12/12       0/12       2/12      12/12      12/12 
+  KERNSTOR   có               4      4/4        0/4        4/4        4/4        4/4  
+  CHỈ loại chưa gặp                  3/3        0/3        3/3        3/3        3/3  
+
+10 đặc trưng quan trọng nhất của Random Forest (học trên train + val):
+  f_sev_FATAL            0.407
+  f_n_logs               0.254
+  f_n_components         0.111
+  f_n_nodes              0.098
+  f_comp_KERNEL          0.097
+  f_sev_INFO             0.018
+  f_comp_APP             0.010
+  f_sev_WARNING          0.004
+  f_comp_LINKCARD        0.001
+  f_comp_DISCOVERY       0.000
+
+Đã ghi dự đoán từng cửa sổ test: reports\mvp\step3_predictions_test.csv

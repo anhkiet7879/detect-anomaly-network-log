@@ -1,0 +1,23 @@
+===== A. CÁC DÒNG CÁCH TÁCH CŨ KHÔNG ĐỌC ĐƯỢC =====
+Tổng số dòng lỗi        : 34,470
+  trong đó là alert     : 0
+  có node = '-'         : 0
+  regex mới đọc được    : 34,470
+  level (theo regex)    : {'INFO': 33933, 'FATAL': 537}
+
+Phân loại theo số phần sau khi tách:
+   số phần |   số dòng |  là alert
+         9 |    34,470 |         0
+
+Ví dụ (tối đa 3 dòng cho mỗi số phần):
+  --- 9 phần ---
+    dòng 1579028: - 1120866514 2005.07.08 R02-M1-N8-C:J13-U01 2005-07-08-16.48.34.004234 R02-M1-N8-C:J13-U01 RAS KERNEL FATAL
+    dòng 1579029: - 1120866514 2005.07.08 R35-M1-N0-C:J12-U11 2005-07-08-16.48.34.031730 R35-M1-N0-C:J12-U11 RAS KERNEL FATAL
+    dòng 1579030: - 1120866514 2005.07.08 R36-M0-NC-C:J12-U01 2005-07-08-16.48.34.080039 R36-M0-NC-C:J12-U01 RAS KERNEL FATAL
+
+===== B. PARSER REGEX MỚI TRÊN TOÀN BỘ FILE =====
+Tổng số dòng            : 4,747,963  (alert: 348,460)
+Regex đọc được          : 4,747,953  (99.9998%)
+Regex KHÔNG đọc được    : 10  (alert: 0)
+Nhãn của dòng không đọc được (10 nhãn nhiều nhất): {'-': 10}
+Đã ghi tối đa 2000 dòng không đọc được vào: reports\explore\regex_unmatched.txt

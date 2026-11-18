@@ -1,0 +1,76 @@
+[1] QUY MO
+  Tong so dong              : 4,747,963
+  Dong loi dinh dang        : 0
+  Dong co byte khong UTF-8  : 0
+
+[2] NHAN
+  Dong bat thuong           : 348,460 (7.34%)
+  So loai nhan bat thuong   : 41
+    KERNDTLB         152,734
+    KERNSTOR          63,491
+    APPSEV            49,651
+    KERNMNTF          31,531
+    KERNTERM          23,338
+    KERNREC            6,145
+    APPREAD            5,983
+    KERNRTSP           3,983
+    APPRES             2,370
+    APPUNAV            2,048
+    APPTO              1,991
+    KERNMICRO          1,503
+    APPOUT               816
+    KERNMNT              720
+    APPBUSY              512
+
+[3] LEVEL (severity goc) x NHAN
+  Level        Binh thuong    Bat thuong  % bat thuong
+  INFO           3,735,813             0          0.0%
+  FATAL            506,797       348,398         40.7%
+  ERROR            112,355             0          0.0%
+  WARNING           23,357             0          0.0%
+  SEVERE            19,213             0          0.0%
+  FAILURE            1,652            62          3.6%
+  Kill                 306             0          0.0%
+  single                 4             0          0.0%
+  microseconds             4             0          0.0%
+  0x00544eb8,             2             0          0.0%
+  -> Luat 'Level=FATAL la bat thuong' (theo dong): Precision=40.74%, Recall=99.98%
+
+[4] THOI GIAN (theo cot Epoch, hien thi UTC)
+  Tu 2005-06-03 22:42:50 den 2006-01-04 16:00:05 (214.7 ngay)
+  So ngay co du lieu        : 215 / 215
+  Dong lech thu tu thoi gian: 0
+  Khoang trong > 1 gio      : 1,005
+        49.0 gio  tu 2005-07-31 19:10:13 den 2005-08-02 20:13:05
+        17.8 gio  tu 2005-12-05 00:52:26 den 2005-12-05 18:42:03
+        15.3 gio  tu 2005-08-04 00:19:24 den 2005-08-04 15:37:59
+        14.8 gio  tu 2005-09-14 00:26:47 den 2005-09-14 15:13:09
+        14.3 gio  tu 2005-12-17 03:13:04 den 2005-12-17 17:32:26
+
+[5] MUI GIO: do lech (gio) = cot Time - cot Epoch
+                -7 gio : 3,669,612 dong
+                -8 gio : 1,078,351 dong
+
+[6] NGUON (node)
+  So node                   : 69,252
+  So node co bat thuong     : 31,375
+  10 node nhieu bat thuong nhat chiem 44.1% so dong bat thuong:
+    R30-M0-N9-C:J16-U01            152,185
+    NULL                               271
+    R00-M0-NC-I:J18-U11                169
+    R63-M0-L2-U21-A                    160
+    R50-M1-NC-I:J18-U11                148
+
+[7] DOT BAT THUONG (gom cac dong bat thuong cach nhau <= 5 phut)
+  So dot                    : 820
+  Thoi luong (giay)  median : 9   p90: 156   max: 22,908
+  So dong / dot      median : 6   p90: 514   max: 152,183
+  Dot chi co 1 dong         : 206
+  3 dot lon nhat chiem 54.3% so dong bat thuong
+
+[8] THEO CUA SO THOI GIAN (chi tinh cua so co it nhat 1 dong log)
+  Cua so 1 gio  : 3,619, co bat thuong 665 (18.4%)
+  Cua so 5 phut : 14,494, co bat thuong 1,054 (7.3%)
+
+[9] TRUNG LAP
+  Dong lap lai lien tiep (cung node + noi dung): 523,134 (11.0%)

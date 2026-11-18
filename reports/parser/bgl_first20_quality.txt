@@ -1,0 +1,61 @@
+===== BÁO CÁO CHẤT LƯỢNG PARSER BGL v2 — bgl_first20 =====
+File gốc        : data\raw\bgl\BGL\BGL.log  (4,747,963 dòng)
+Đoạn lấy        : dòng 0 đến 949,591
+Đầu ra          : data\processed\bgl_first20.csv
+
+--- 1. Đọc dữ liệu ---
+Số dòng đọc       : 949,592
+Parse được        : 949,592  (100.0000%)
+Cách ly           : 0  -> data\processed\bgl_first20_quarantine.txt
+Message rỗng      : 0
+Thiếu NodeRepeat  : 3
+NodeRepeat ≠ Node : 0
+
+--- 2. Thời gian ---
+Dòng đầu / cuối   : 2005-06-03T22:42:50Z  ->  2005-06-25T10:34:15Z
+Epoch lùi lại     : 0 dòng
+Độ lệch Time–epoch (giờ, làm tròn) — kỳ vọng 7 (PDT, mùa hè) hoặc 8 (PST, mùa đông):
+      7 giờ :     949,592 dòng
+Lệch không tròn giờ (>36 giây): 0 dòng
+
+--- 3. Severity ---
+  severity_raw  norm     số dòng   là alert
+  FATAL            2     545,466    224,921
+  INFO             6     403,385          0
+  WARNING          4         299          0
+  SEVERE           2         245          0
+  ERROR            3         197          0
+Mức không có trong bảng ánh xạ (severity_norm trống): 0 dòng
+
+--- 4. Nhãn ---
+Dòng alert        : 224,921  (23.69%)   [toàn file kỳ vọng 348.460]
+Số loại alert     : 7
+    KERNDTLB       152,659
+    KERNSTOR        63,488
+    APPREAD          5,983
+    KERNRTSP         2,369
+    APPCHILD           256
+    APPALLOC           144
+    KERNMC              22
+
+--- 5. Bảng chéo component × log_type ---
+  component           RAS       NULL
+  KERNEL          937,448          0
+  APP              11,217          0
+  DISCOVERY             0        714
+  LINKCARD            161          0
+  HARDWARE              0         29
+  MMCS                 15          0
+  CMCS                  0          6
+  BGLMASTER             2          0
+
+--- 6. Bảng chéo component × loại card (suy từ node, không lưu cột) ---
+  component       compute         io       link      other    unknown
+  KERNEL          931,665      5,780          0          0          3
+  APP                   0     11,217          0          0          0
+  DISCOVERY             0          0          0        665         49
+  LINKCARD              0          0        161          0          0
+  HARDWARE              0          0          0         12         17
+  MMCS                  0          0          0          0         15
+  CMCS                  0          0          0          0          6
+  BGLMASTER             0          0          0          0          2

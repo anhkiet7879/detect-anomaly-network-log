@@ -1,0 +1,106 @@
+===== BÁO CÁO CHẤT LƯỢNG PARSER BGL v2 — bgl_parsed =====
+File gốc        : data\raw\bgl\BGL\BGL.log  (4,747,963 dòng)
+Đoạn lấy        : dòng 0 đến 4,747,962
+Đầu ra          : data\processed\bgl_parsed.csv
+
+--- 1. Đọc dữ liệu ---
+Số dòng đọc       : 4,747,963
+Parse được        : 4,747,953  (99.9998%)
+Cách ly           : 10  -> data\processed\bgl_parsed_quarantine.txt
+Message rỗng      : 34,470
+Thiếu NodeRepeat  : 306
+NodeRepeat ≠ Node : 8
+    vd dòng 3865489: node=- | node_repeat=.²Ð1}ÐDÝC`)ÙpDÝCpDÝC@DÝC@
+    vd dòng 3865491: node=- | node_repeat=.²Ð1}ÐDÝC`)ÙpDÝCpDÝC@DÝC@
+    vd dòng 3875812: node=- | node_repeat=.²ÐFÇiDÝC`)ÙpDÝCpDÝC@DÝC@
+    vd dòng 3875813: node=- | node_repeat=.²ÐFÇiDÝC`)ÙpDÝCpDÝC@DÝC@
+    vd dòng 3884943: node=- | node_repeat=.²ÐM·q8Oïã`)ÙpOïãpOïã@Oïã@
+
+--- 2. Thời gian ---
+Dòng đầu / cuối   : 2005-06-03T22:42:50Z  ->  2006-01-04T16:00:05Z
+Epoch lùi lại     : 0 dòng
+Độ lệch Time–epoch (giờ, làm tròn) — kỳ vọng 7 (PDT, mùa hè) hoặc 8 (PST, mùa đông):
+      7 giờ :   3,669,612 dòng
+      8 giờ :   1,078,341 dòng
+Lệch không tròn giờ (>36 giây): 0 dòng
+
+--- 3. Severity ---
+  severity_raw  norm     số dòng   là alert
+  INFO             6   3,735,813          0
+  FATAL            2     855,501    348,398
+  ERROR            3     112,355          0
+  WARNING          4      23,357          0
+  SEVERE           2      19,213          0
+  FAILURE          1       1,714         62
+Mức không có trong bảng ánh xạ (severity_norm trống): 0 dòng
+
+--- 4. Nhãn ---
+Dòng alert        : 348,460  (7.34%)   [toàn file kỳ vọng 348.460]
+Số loại alert     : 41
+    KERNDTLB       152,734
+    KERNSTOR        63,491
+    APPSEV          49,651
+    KERNMNTF        31,531
+    KERNTERM        23,338
+    KERNREC          6,145
+    APPREAD          5,983
+    KERNRTSP         3,983
+    APPRES           2,370
+    APPUNAV          2,048
+    APPTO            1,991
+    KERNMICRO        1,503
+    APPOUT             816
+    KERNMNT            720
+    APPBUSY            512
+    KERNMC             342
+    APPCHILD           320
+    KERNSOCK           209
+    KERNPOW            192
+    LINKIAP            166
+    APPALLOC           144
+    KERNSERV            94
+    MASABNORM           37
+    LINKDISC            24
+    KERNPAN             18
+    KERNCON             16
+    KERNNOETH           14
+    LINKPAP             14
+    MONPOW              12
+    MASNORM             10
+    APPTORUS            10
+    KERNPROG             5
+    KERNFLOAT            3
+    KERNRTSA             3
+    MMCS                 3
+    MONNULL              2
+    LINKBLL              2
+    KERNEXT              1
+    KERNBIT              1
+    MONILL               1
+    KERNTLBE             1
+
+--- 5. Bảng chéo component × log_type ---
+  component           RAS       NULL
+  KERNEL        4,324,957          0
+  APP             228,536          0
+  DISCOVERY             0     97,172
+  MMCS             88,930          0
+  HARDWARE              0      5,148
+  MONITOR               0      1,681
+  LINKCARD          1,170          0
+  CMCS                  0        211
+  BGLMASTER           145          0
+  SERV_NET              0          3
+
+--- 6. Bảng chéo component × loại card (suy từ node, không lưu cột) ---
+  component       compute         io       link      other    unknown
+  KERNEL        4,151,882    172,537          0          0        538
+  APP                 150    228,386          0          0          0
+  DISCOVERY             0          0         19     70,619     26,534
+  MMCS                  3          0          0          0     88,927
+  HARDWARE              0          0      1,389      3,468        291
+  MONITOR               0          0      1,331        350          0
+  LINKCARD              0          0      1,170          0          0
+  CMCS                  0          0          0          0        211
+  BGLMASTER             0          0          0          0        145
+  SERV_NET              0          0          0          0          3

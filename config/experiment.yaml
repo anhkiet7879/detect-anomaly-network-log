@@ -1,0 +1,97 @@
+# ==============================================================================
+# EXPERIMENT CONFIGURATION - TASK K1
+# Đề tài N3.10: Phát hiện bất thường trong log & mạng (AIOps / Observability)
+# ==============================================================================
+
+experiment:
+  name: "BGL Anomaly Detection Zero-Leakage Evaluation"
+  version: "1.0.0"
+  random_seed: 42
+
+# Cấu hình chống rò rỉ dữ liệu (Zero Data Leakage)
+leakage_prevention:
+  buffer_gap_mins: 60       # Khoảng đệm an toàn giữa Train và Test (phút) để tránh cắt đôi window 5m
+  clean_train_only: true     # Lọc bỏ toàn bộ log/window bất thường trong tập Train (chỉ học dữ liệu sạch)
+  reset_state: true          # Khởi tạo mới hoàn toàn Drain3 & model ở mỗi fold / scenario
+
+# Cấu hình dữ liệu
+data:
+  dataset_name: "bgl"
+  features_path: "data/features/bgl_mvp_windows.csv"
+  episodes_path: "data/processed/bgl_episodes.csv"
+  processed_parquet: "data/processed/bgl_parsed.parquet"
+  processed_csv: "data/processed/bgl_parsed.csv"
+  
+  # Các cột đặc trưng đầu vào (chỉ f_..., tuyệt đối không dùng gt_... hay y)
+  features:
+    - "f_n_logs"
+    - "f_n_nodes"
+    - "f_n_components"
+    - "f_sev_INFO"
+    - "f_sev_WARNING"
+    - "f_sev_SEVERE"
+    - "f_sev_ERROR"
+    - "f_sev_FATAL"
+    - "f_sev_FAILURE"
+  target_column: "y"
+  timestamp_column: "ts_epoch"
+  is_anomaly_column: "y"
+
+# Các kịch bản chia dữ liệu (Scenarios)
+scenarios:
+  # 1. Holdout chia theo trục thời gian
+  holdout_80_20:
+    strategy: "holdout"
+    unit: "time"
+    train_ratio: 0.8
+    test_ratio: 0.2
+    
+  holdout_75_25:
+    strategy: "holdout"
+    unit: "time"
+    train_ratio: 0.75
+    test_ratio: 0.25
+
+  holdout_70_30:
+    strategy: "holdout"
+    unit: "time"
+    train_ratio: 0.7
+    test_ratio: 0.3
+
+  holdout_60_40:
+    strategy: "holdout"
+    unit: "time"
+    train_ratio: 0.6
+    test_ratio: 0.4
+
+  # 2. Holdout chia theo sự kiện / đợt sự cố (episodes)
+  holdout_episodes_70_30:
+    strategy: "holdout"
+    unit: "episodes"
+    train_ratio: 0.7
+    test_ratio: 0.3
+
+  # 3. Time-series Cross Validation
+  expanding_cv:
+    strategy: "expanding_cv"
+    unit: "time"
+    n_splits: 4
+    min_train_ratio: 0.4
+    
+  rolling_cv:
+    strategy: "rolling_cv"
+    unit: "time"
+    n_splits: 4
+    train_window_ratio: 0.4
+    test_window_ratio: 0.15
+
+# Đánh giá & Báo cáo đầu ra
+output:
+  reports_dir: "reports/evaluation"
+  save_predictions: true
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "mcc"

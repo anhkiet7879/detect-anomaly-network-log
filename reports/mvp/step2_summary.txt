@@ -1,0 +1,18 @@
+===== MVP BƯỚC 2: CỬA SỔ 5 PHÚT + ĐẶC TRƯNG BỘ A =====
+Đầu vào: data\processed\bgl_first20.csv  (949,592 dòng)
+Mốc chia học/test: line_no 474,796
+Số đặc trưng (f_...): 18
+
+phần   từ                   đến                   cửa sổ  có log  alert  %alert
+train  2005-06-03T22:40:00Z 2005-06-12T12:55:00Z   2,476     527    112   4.52%
+val    2005-06-12T13:00:00Z 2005-06-14T16:35:00Z     620      78     12   1.94%
+test   2005-06-14T16:35:00Z 2005-06-25T10:30:00Z   3,096     829     24   0.78%
+
+Loại alert trong train: APPREAD, KERNDTLB, KERNMC, KERNRTSP
+Loại alert trong val  : APPREAD, KERNMC, KERNRTSP, KERNSTOR
+Loại alert trong test : APPALLOC, APPCHILD, APPREAD, KERNMC, KERNRTSP, KERNSTOR
+
+Loại CHỈ có trong test (chưa gặp khi học): APPALLOC, APPCHILD
+Cửa sổ test chỉ chứa loại chưa gặp: 3 / 24 cửa sổ alert
+
+Đã ghi: data\features\bgl_mvp_windows.csv
