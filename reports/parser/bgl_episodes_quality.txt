@@ -1,0 +1,57 @@
+===== BÁO CÁO ĐỢT SỰ CỐ (EPISODES) — bgl_parsed.csv =====
+Input             : data\processed\bgl_parsed.csv  (4,747,953 dòng)
+Output            : data\processed\bgl_episodes.csv
+Quy tắc gom       : 2 dòng alert liên tiếp cách nhau <= 900 giây (15 phút) -> cùng đợt
+
+Dòng alert        : 348,460
+Số đợt            : 730
+Kiểm tra tổng     : tổng anomaly_count = 348,460  (KHỚP số dòng alert)
+Thời lượng (giây) : trung vị 19 | p90 434 | max 22,908
+Số dòng / đợt     : trung vị 6 | p90 716 | max 152,183
+Đợt chỉ có 1 dòng : 173
+Đợt có >1 loại alert: 297
+3 đợt lớn nhất chiếm 55.4% số dòng alert:
+    đợt   24: 2005-06-12T00:17:44Z -> 2005-06-12T06:39:32Z, 152,183 dòng, chính: KERNDTLB
+    đợt   32: 2005-06-14T16:31:27Z -> 2005-06-14T16:56:49Z, 24,576 dòng, chính: KERNSTOR
+    đợt   30: 2005-06-14T00:36:20Z -> 2005-06-14T00:44:46Z, 16,384 dòng, chính: KERNSTOR
+
+Số đợt theo loại alert chính:
+    KERNMC         208
+    APPSEV         125
+    KERNTERM        86
+    KERNMNTF        79
+    KERNRTSP        38
+    KERNSOCK        33
+    KERNCON         15
+    KERNPAN         14
+    LINKIAP         13
+    KERNDTLB        12
+    MASABNORM       12
+    MASNORM          9
+    KERNPOW          9
+    MONPOW           9
+    APPREAD          7
+    KERNSTOR         6
+    KERNMNT          6
+    LINKDISC         5
+    LINKPAP          5
+    KERNNOETH        4
+    APPTORUS         4
+    APPRES           4
+    APPCHILD         3
+    KERNPROG         3
+    APPALLOC         2
+    APPUNAV          2
+    KERNMICRO        2
+    KERNRTSA         2
+    KERNSERV         2
+    APPTO            2
+    APPBUSY          1
+    KERNEXT          1
+    KERNFLOAT        1
+    KERNBIT          1
+    MMCS             1
+    MONILL           1
+    LINKBLL          1
+    APPOUT           1
+    KERNREC          1
