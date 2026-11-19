@@ -1,0 +1,54 @@
+===== THỬ NGHIỆM DRAIN3 — bgl_first20.csv, 200,000 dòng đầu =====
+Cấu hình         : config\drain3.ini  (sim_th = 0.5, depth = 4)
+Train / Test     : 160,000 dòng (2005-06-03T22:42:50Z -> 2005-06-07T13:06:00Z) / 40,000 dòng (2005-06-07T13:06:00Z -> 2005-06-09T04:46:42Z)
+
+--- 1. Học trên Train ---
+Số template học được : 59  (+ <EMPTY> nếu có: 0 dòng rỗng)
+Số message khác nhau : 16,033
+Thời gian học        : 2.8 giây  (57,068 dòng/giây)
+Template chiếm 90% số dòng: 3
+Template chỉ có 1 dòng    : 4
+
+--- 2. Suy luận trên Test (từ điển đã khóa) ---
+Thời gian            : 0.2 giây
+Dòng rơi vào template MỚI (-1): 246 / 40,000 (0.61%)
+  trong đó là alert : 2
+  ví dụ message mới (tối đa 8 mẫu khác nhau):
+        112 × ciod: LOGIN chdir(/home/bertsch2/src/bgl_hello) failed: Permission denied
+         15 × Node card is not fully functional
+         15 × Can not get assembly information for node card
+         15 × Node card status: no ALERTs are active. Clock Mode is Low. Clock Select is Midplane. Phy JTAG Reset is asserte
+          2 × interrupt threshold...0
+          2 × 0x00000000 0x00000000
+          1 × machine check interrupt (bit=0x06): L3 major internal error
+          1 × L3 global control register: 0x001249f0
+Từ điển KHÔNG đổi sau transform : ĐẠT
+Gọi learn() sau khi khóa bị chặn: ĐẠT
+
+--- 3. Reset State ---
+Học lại từ đầu ra cùng số template (59): ĐẠT
+
+--- 4. 15 template nhiều dòng nhất trên Train ---
+    id   số dòng  %alert sev      template
+     3   121,098    0.0% INFO     generating <CORE>
+     1    20,940    0.0% INFO     instruction cache parity error corrected
+    11     4,737    0.0% INFO     <NUM> double-hummer alignment exceptions
+     6     2,545    0.0% INFO     CE sym <NUM>, at <HEX>, mask <HEX>
+    17     2,040  100.0% FATAL    ciod: failed to read message prefix on control stream (CioStream socket to <IP>
+    58     1,511    0.0% INFO     ciod: cpu <NUM> at treeaddr <NUM> sent unrecognized message <HEX>
+    55     1,264    0.0% INFO     ciod: Message code <NUM> is not <NUM> or <NUM>
+    48       736    0.0% FATAL    <REG> <REG> <REG> <REG>
+    18       477  100.0% FATAL    data TLB error interrupt
+     4       420    0.0% INFO     <NUM> ddr errors(s) detected and corrected on rank <NUM>, symbol <NUM>, bit <NUM>
+     7       349    0.0% INFO     total of <NUM> ddr error(s) detected and corrected
+    52       346    0.0% INFO     <NUM> torus receiver <*> input pipe error(s) (dcr <HEX>) detected and corrected
+    16       200    0.0% FATAL    ciod: LOGIN <*> failed: No such file or directory
+    57       185    0.0% INFO     ciod: for node <NUM>, read continuation request but ioState is <NUM>
+    35       184    0.0% FATAL    floating pt ex mode <NUM> enable......<NUM>
+
+--- 5. Template có alert trên Train ---
+    17     2,040  100.0% FATAL    ciod: failed to read message prefix on control stream (CioStream socket to <IP>
+    18       477  100.0% FATAL    data TLB error interrupt
+    51        97  100.0% FATAL    rts panic! - stopping execution
+    20        93    1.1% FATAL    machine check <*>
+    59         1  100.0% FATAL    machine check interrupt (bit=<HEX>): L2 dcache unit data parity error
