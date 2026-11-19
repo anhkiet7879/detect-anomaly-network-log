@@ -1,0 +1,35 @@
+===== [H5] ĐẶC TRƯNG CỬA SỔ 5 PHÚT — bgl_first20.csv, 949,592 dòng =====
+Mốc cắt        : 2005-06-14T18:25Z  | khoảng đệm 60 phút (17,485 dòng bị bỏ)
+Cửa sổ trống   : CÓ thêm (fill_empty)   | template hiếm: < 10 dòng trên Train
+Số đặc trưng   : bộ A 17 cột, bộ B 136 cột (133 cột f_tpl_*)
+
+phần   từ                 đến                  dòng log   cửa sổ  có log  alert  %alert
+train  2005-06-03T22:40Z  2005-06-14T18:20Z     755,083    3,117     625    129   4.14%
+test   2005-06-14T19:25Z  2005-06-25T10:30Z     177,024    3,062     801     19   0.62%
+
+--- Tự kiểm tra ---
+[train] tổng f_n_logs = số dòng (755,083)        : ĐẠT
+[train] tổng f_sev_* = f_n_logs ở mọi cửa sổ               : ĐẠT
+[train] tổng f_tpl_* = f_n_logs ở mọi cửa sổ               : ĐẠT
+[train] tổng gt_alert_lines = số dòng alert (221,519) : ĐẠT
+[test] tổng f_n_logs = số dòng (177,024)        : ĐẠT
+[test] tổng f_sev_* = f_n_logs ở mọi cửa sổ               : ĐẠT
+[test] tổng f_tpl_* = f_n_logs ở mọi cửa sổ               : ĐẠT
+[test] tổng gt_alert_lines = số dòng alert (3,402) : ĐẠT
+Train và Test cùng bộ cột                                : ĐẠT
+Train không có dòng template mới                         : ĐẠT
+Không có cột gt_/y trong danh sách đặc trưng             : ĐẠT
+
+--- Test: trung bình đặc trưng ở cửa sổ alert (y=1) vs bình thường (y=0), chỉ cửa sổ có log ---
+  đặc trưng                     y=0          y=1   cửa sổ: y=0 782 | y=1 19
+  f_n_logs                   214.77       477.42
+  f_n_nodes                  116.95       174.53
+  f_sev_FATAL                  2.61       218.89
+  f_sev_FAILURE                0.00         0.00
+  f_sev_ERROR                  0.21         0.00
+  f_n_templates                2.42        23.79
+  f_n_new_tpl_lines            0.53        51.58
+  f_n_rare_tpl_lines           0.04        11.21
+
+--- Test: cửa sổ có ít nhất 1 dòng template mới ---
+  43 cửa sổ, trong đó 6 cửa sổ có alert (tổng cửa sổ alert trên Test: 19)
