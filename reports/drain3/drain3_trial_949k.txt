@@ -1,0 +1,57 @@
+===== THỬ NGHIỆM DRAIN3 — bgl_first20.csv, 949,592 dòng đầu =====
+Cấu hình         : config\drain3.ini  (sim_th = 0.5, depth = 4)
+Train / Test     : 759,673 dòng (2005-06-03T22:42:50Z -> 2005-06-14T18:27:22Z) / 189,919 dòng (2005-06-14T18:27:22Z -> 2005-06-25T10:34:15Z)
+
+--- 1. Học trên Train ---
+Số template học được : 132  (+ <EMPTY> nếu có: 0 dòng rỗng)
+Số message khác nhau : 23,470
+Thời gian học        : 14.6 giây  (52,073 dòng/giây)
+Template chiếm 90% số dòng: 25
+Template chỉ có 1 dòng    : 35
+
+--- 2. Suy luận trên Test (từ điển đã khóa) ---
+Thời gian            : 1.0 giây
+Dòng rơi vào template MỚI (-1): 1,396 / 189,919 (0.74%)
+  trong đó là alert : 400
+  ví dụ message mới (tối đa 8 mẫu khác nhau):
+        256 × ciod: Unexpected eof at line 8193 of node map file /p/gb2/cabot/miranda/newmaps/8k_128x64x1_8x4x4.map
+        256 × ciod: Error creating node map from file /p/gb2/cabot/miranda/newmaps/8k_128x64x1_8x4x4.map: No child processes
+        192 × ciod: LOGIN chdir(/p/gb2/cjmundy/RUN_MED) failed: Permission denied
+        128 × ciod: X coordinate 8 exceeds physical dimension 8 at line 4097 of node map file /p/gb2/draeger/benchmark/dat16
+        128 × ciod: Error creating node map from file /p/gb2/draeger/benchmark/dat16k_062205/map16k_bipartyz: Cannot allocat
+         96 × ciod: LOGIN chdir(/p/gb2/cjmundy/RUN_SMALL) failed: Permission denied
+         38 × external input interrupt (unit=0x02 bit=0x0a): torus sender x- retransmission error was corrected
+         33 × external input interrupt (unit=0x02 bit=0x0d): torus sender z+ retransmission error was corrected
+Từ điển KHÔNG đổi sau transform : ĐẠT
+Gọi learn() sau khi khóa bị chặn: ĐẠT
+
+--- 3. Reset State ---
+Học lại từ đầu ra cùng số template (132): ĐẠT
+
+--- 4. 15 template nhiều dòng nhất trên Train ---
+    id   số dòng  %alert sev      template
+     3   189,334    0.0% INFO     generating <CORE>
+    18   152,659  100.0% FATAL    data TLB error interrupt
+   122    63,488  100.0% FATAL    data storage interrupt
+    19    47,203    0.0% FATAL    instruction address: <HEX>
+   125    40,960    0.0% FATAL    program interrupt: <*> <*>
+     1    22,624    0.0% INFO     instruction cache parity error corrected
+    48    17,168    0.0% FATAL    <REG> <REG> <REG> <REG>
+    53    14,426    0.0% FATAL    data address: <HEX>
+   123    14,336    0.0% FATAL    exception syndrome register: <HEX>
+   124    14,336    0.0% FATAL    machine check: i-fetch......................<NUM>
+    35    12,484    0.0% FATAL    floating pt ex mode <NUM> enable......<NUM>
+   128    12,288    0.0% FATAL    data store interrupt caused by <*>
+     6     8,265    0.0% INFO     CE sym <NUM>, at <HEX>, mask <HEX>
+    20     6,247    0.1% FATAL    machine check <*>
+    36     6,242    0.0% FATAL    debug wait enable.................<NUM>
+
+--- 5. Template có alert trên Train ---
+    18   152,659  100.0% FATAL    data TLB error interrupt
+   122    63,488  100.0% FATAL    data storage interrupt
+    20     6,247    0.1% FATAL    machine check <*>
+    17     3,181  100.0% FATAL    ciod: failed to read message prefix on control stream (CioStream socket to <IP>
+    51     2,181  100.0% FATAL    rts panic! - stopping execution
+    86         3   33.3% FATAL    DDR <*> <*> <*> <HEX> <HEX>
+    61         3  100.0% FATAL    machine check interrupt (bit=<HEX>): <*> <*> <*> error
+    59         1  100.0% FATAL    machine check interrupt (bit=<HEX>): L2 dcache unit data parity error
