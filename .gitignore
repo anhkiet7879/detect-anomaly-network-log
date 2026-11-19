@@ -52,3 +52,6 @@ data/features/*.csv
 .coverage
 htmlcov/
 .DS_Store
+
+# Daily Report ca nhan - khong dua len Git
+daily/
