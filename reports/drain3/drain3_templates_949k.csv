@@ -1,0 +1,133 @@
+template_id,train_count,template,alert_rate,sev
+3,189334,generating <CORE>,0.0,INFO
+18,152659,data TLB error interrupt,1.0,FATAL
+122,63488,data storage interrupt,1.0,FATAL
+19,47203,instruction address: <HEX>,0.0,FATAL
+125,40960,program interrupt: <*> <*>,0.0,FATAL
+1,22624,instruction cache parity error corrected,0.0,INFO
+48,17168,<REG> <REG> <REG> <REG>,0.0,FATAL
+53,14426,data address: <HEX>,0.0,FATAL
+123,14336,exception syndrome register: <HEX>,0.0,FATAL
+124,14336,machine check: i-fetch......................<NUM>,0.0,FATAL
+35,12484,floating pt ex mode <NUM> enable......<NUM>,0.0,FATAL
+128,12288,data store interrupt caused by <*>,0.0,FATAL
+6,8265,"CE sym <NUM>, at <HEX>, mask <HEX>",0.0,INFO
+20,6247,machine check <*>,0.0008003841844085161,FATAL
+36,6242,debug wait enable.................<NUM>,0.0,FATAL
+37,6242,debug interrupt enable............<NUM>,0.0,FATAL
+32,6242,external input interrupt enable...<NUM>,0.0,FATAL
+29,6242,machine state register: <HEX>,0.0,FATAL
+31,6242,critical input interrupt enable...<NUM>,0.0,FATAL
+34,6242,floating point instr. enabled.....<NUM>,0.0,FATAL
+33,6242,"problem state (<NUM>=sup,<NUM>=usr).......<NUM>",0.0,FATAL
+30,6242,wait state enable.................<NUM>,0.0,FATAL
+131,6144,program interrupt: fp cr update.............<NUM>,0.0,FATAL
+130,6144,byte ordering exception.....................<NUM>,0.0,FATAL
+126,6144,floating point operation....................<NUM>,0.0,FATAL
+129,6144,auxiliary processor.........................<NUM>,0.0,FATAL
+127,6144,store operation.............................<NUM>,0.0,FATAL
+132,6144,program interrupt: fp cr field .............<NUM>,0.0,FATAL
+38,5659,instruction address space.........<NUM>,0.0,FATAL
+11,4737,<NUM> double-hummer alignment exceptions,0.0,INFO
+44,4292,guaranteed <*> cache block <*>,0.0,FATAL
+46,4292,icache prefetch <*>,0.0,FATAL
+17,3181,ciod: failed to read message prefix on control stream (CioStream socket to <IP>,1.0,FATAL
+58,2569,ciod: cpu <NUM> at treeaddr <NUM> sent unrecognized message <HEX>,0.0,INFO
+55,2278,ciod: Message code <NUM> is not <NUM> or <NUM>,0.0,INFO
+51,2181,rts panic! - stopping execution,1.0,FATAL
+50,2146,<*> cr:<NUM> xer:<NUM> <*>,0.0,FATAL
+41,2146,disable store gathering..................<NUM>,0.0,FATAL
+39,2146,data address space................<NUM>,0.0,FATAL
+47,2146,general purpose registers:,0.0,FATAL
+45,2146,force load/store alignment...............<NUM>,0.0,FATAL
+40,2146,core configuration register: <HEX>,0.0,FATAL
+42,2146,disable apu instruction broadcast........<NUM>,0.0,FATAL
+43,2146,disable trace broadcast..................<NUM>,0.0,FATAL
+49,2146,special purpose registers:,0.0,FATAL
+16,2140,ciod: LOGIN <*> failed: No such file or directory,0.0,FATAL
+54,2138,rts internal error,0.0,FATAL
+4,1004,"<NUM> ddr errors(s) detected and corrected on rank <NUM>, symbol <NUM>, bit <NUM>",0.0,INFO
+7,825,total of <NUM> ddr error(s) detected and corrected,0.0,INFO
+10,528,"ciod: Error loading <*> invalid or missing program image, No such file or directory",0.0,FATAL
+52,392,<NUM> torus receiver <*> input pipe error(s) (dcr <HEX>) detected and corrected,0.0,INFO
+5,386,<NUM> L3 <*> error(s) (dcr <HEX>) detected and corrected,0.0,INFO
+57,321,"ciod: for node <NUM>, read continuation request but ioState is <NUM>",0.0,INFO
+56,136,ciod: pollControlDescriptors: Detected the debugger died.,0.0,INFO
+60,112,ciod: LOGIN chdir(/home/bertsch2/src/bgl_hello) failed: Permission denied,0.0,FATAL
+2,91,MidplaneSwitchController performing bit sparing on <*> bit <NUM>,0.0,INFO
+12,86,<NUM> tree receiver <NUM> in re-synch state event(s) (dcr <HEX>) detected,0.0,INFO
+8,68,ddr: activating redundant bit steering: rank=<NUM> symbol=<NUM>,0.0,INFO
+113,34,Can not get assembly information for node card,0.0,SEVERE
+114,34,Node card status: no ALERTs are active. Clock Mode is Low. Clock Select is Midplane. Phy JTAG Reset is asserted. ASIC JTAG Reset is asserted. Temperature Mask is not active. No temperature error. Temperature Limit Error Latch is clear. PGOOD IS NOT ASSERTED. PGOOD ERROR LATCH IS ACTIVE. MPGOOD IS NOT OK. MPGOOD ERROR LATCH IS ACTIVE. The <NUM>.<NUM> volt rail is OK. The <NUM>.<NUM> volt rail is OK.,0.0,ERROR
+112,34,Node card is not fully functional,0.0,WARNING
+9,21,"ddr: excessive soft failures, consider replacing the card",0.0,INFO
+27,16,d-cache <*> parity <*>,0.0,FATAL
+24,16,data <*> plb <*>,0.0,FATAL
+115,14,Node card VPD check: <*> node in processor card slot <*> do not match. VPD ecid <*> found <*>,0.0,WARNING
+26,8,i-cache parity error..............<NUM>,0.0,FATAL
+28,8,imprecise machine check...........<NUM>,0.0,FATAL
+21,8,machine check status register: <HEX>,0.0,FATAL
+23,8,instruction plb error.............<NUM>,0.0,FATAL
+22,8,summary...........................<NUM>,0.0,FATAL
+25,8,tlb error.........................<NUM>,0.0,FATAL
+74,6,capture first <*> <*> error address..<NUM>,0.0,FATAL
+117,5,<NUM> torus sender <*> retransmission error(s) (dcr <HEX>) detected and corrected,0.0,INFO
+89,4,memory manager <*> <*>,0.0,FATAL
+63,4,start <*>,0.0,FATAL
+81,3,parity error in <*> <*>,0.0,FATAL
+15,3,mmcs_db_server has been started: ./mmcs_db_server --useDatabase BGL --dbproperties serverdb.properties --iolog /bgl/BlueLight/logs/BGL --reconnect-blocks all,0.0,INFO
+14,3,ciodb has been restarted.,0.0,INFO
+13,3,idoproxydb has been started: $Name: DRV142_<NUM> $ Input parameters: -enableflush -loguserinfo db.properties BlueGene1,0.0,INFO
+70,3,prefetch depth for <*> <*>,0.0,FATAL
+82,3,parity error in read queue <*>,0.0,FATAL
+78,3,uncorrectable error detected in <*> <*>,0.0,FATAL
+86,3,DDR <*> <*> <*> <HEX> <HEX>,0.3333333333333333,FATAL
+61,3,machine check interrupt (bit=<HEX>): <*> <*> <*> error,1.0,FATAL
+107,3,<HEX> <HEX>,0.0,FATAL
+109,2,"PrepareForService shutting down <*> <*> <*> mIp(<IP>), mType(<NUM>)) as part of Service Action <NUM>",0.0,WARNING
+108,2,"PrepareForService is being done on this <*> <*> <*> mIp(<IP>), mType(<NUM>)) by root",0.0,WARNING
+110,2,EndServiceAction is restarting the NodeCards in midplane <*> as part of Service Action <NUM>,0.0,WARNING
+92,2,memory manager <*> buffer <*>,0.0,FATAL
+91,2,memory manager <*>,0.0,FATAL
+62,2,L3 <*> control register: <*>,0.0,FATAL
+80,2,uncorrectable error detected in EDRAM bank <NUM>...<NUM>,0.0,FATAL
+83,2,number of correctable errors detected in L3 <*>,0.0,FATAL
+84,2,interrupt threshold...<NUM>,0.0,FATAL
+79,2,correctable error detected in EDRAM bank <NUM>.....<NUM>,0.0,FATAL
+77,2,correctable error detected in directory <NUM>......<NUM>,0.0,FATAL
+111,2,EndServiceAction <NUM> performed upon <*> by root,0.0,WARNING
+59,1,machine check interrupt (bit=<HEX>): L2 dcache unit data parity error,1.0,FATAL
+64,1,disable speculative access...............<NUM>,0.0,FATAL
+65,1,close EDRAM pages as soon as possible....<NUM>,0.0,FATAL
+68,1,write buffer commit threshold............<NUM>,0.0,FATAL
+67,1,disable all access to cache directory....<NUM>,0.0,FATAL
+66,1,size of scratchpad portion of L3.........<NUM> (0M),0.0,FATAL
+99,1,symbol................<NUM>,0.0,FATAL
+100,1,mask..................<HEX>,0.0,FATAL
+95,1,memory manager / command manager address parity..<NUM>,0.0,FATAL
+94,1,state machine....................................<NUM>,0.0,FATAL
+93,1,memory manager refresh counter timeout...........<NUM>,0.0,FATAL
+90,1,memory manager address parity error..............<NUM>,0.0,FATAL
+85,1,number of lines with parity errors written to L3 EDRAMs...<NUM>,0.0,FATAL
+87,1,memory and bus summary...........................<NUM>,0.0,FATAL
+88,1,command manager unit summary.....................<NUM>,0.0,FATAL
+69,1,size of DDR we are caching...............<NUM> (512M),0.0,FATAL
+71,1,max number of outstanding prefetches.....<NUM>,0.0,FATAL
+73,1,disable write lines <NUM>:<NUM>..................<NUM>,0.0,FATAL
+72,1,turn on hidden refreshes.................<NUM>,0.0,FATAL
+75,1,disable flagging of DDR UE's as major internal error.<NUM>,0.0,FATAL
+76,1,L3 ecc status register: <NUM>,0.0,FATAL
+98,1,capture valid.........<NUM>,0.0,FATAL
+97,1,DDR failing info register: <HEX>,0.0,FATAL
+96,1,regctl scancom interface.........................<NUM>,0.0,FATAL
+104,1,correctable error.....<NUM>,0.0,FATAL
+106,1,chip select...........<NUM>,0.0,FATAL
+105,1,qw trapped............<NUM>,0.0,FATAL
+116,1,ciod: sendMsgToDebugger: error sending PROGRAM_EXITED message to debugger.,0.0,INFO
+103,1,address parity error..<NUM>,0.0,FATAL
+101,1,miscompare............<NUM>,0.0,FATAL
+102,1,uncorrectable error...<NUM>,0.0,FATAL
+121,1,Running as background command,0.0,INFO
+118,1,L3 correctable errors exceeds threshold (iar <HEX> lr <HEX>),0.0,INFO
+119,1,Starting SystemController,0.0,INFO
+120,1,Controlling BG/L rows [ <NUM> <NUM> <NUM> <NUM> ],0.0,INFO

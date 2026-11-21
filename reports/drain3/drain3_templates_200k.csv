@@ -1,0 +1,60 @@
+template_id,train_count,template,alert_rate,sev
+3,121098,generating <CORE>,0.0,INFO
+1,20940,instruction cache parity error corrected,0.0,INFO
+11,4737,<NUM> double-hummer alignment exceptions,0.0,INFO
+6,2545,"CE sym <NUM>, at <HEX>, mask <HEX>",0.0,INFO
+17,2040,ciod: failed to read message prefix on control stream (CioStream socket to <IP>,1.0,FATAL
+58,1511,ciod: cpu <NUM> at treeaddr <NUM> sent unrecognized message <HEX>,0.0,INFO
+55,1264,ciod: Message code <NUM> is not <NUM> or <NUM>,0.0,INFO
+48,736,<REG> <REG> <REG> <REG>,0.0,FATAL
+18,477,data TLB error interrupt,1.0,FATAL
+4,420,"<NUM> ddr errors(s) detected and corrected on rank <NUM>, symbol <NUM>, bit <NUM>",0.0,INFO
+7,349,total of <NUM> ddr error(s) detected and corrected,0.0,INFO
+52,346,<NUM> torus receiver <*> input pipe error(s) (dcr <HEX>) detected and corrected,0.0,INFO
+16,200,ciod: LOGIN <*> failed: No such file or directory,0.0,FATAL
+57,185,"ciod: for node <NUM>, read continuation request but ioState is <NUM>",0.0,INFO
+35,184,floating pt ex mode <NUM> enable......<NUM>,0.0,FATAL
+46,184,icache prefetch <*>,0.0,FATAL
+44,184,guaranteed <*> cache block <*>,0.0,FATAL
+10,176,"ciod: Error loading <*> invalid or missing program image, No such file or directory",0.0,FATAL
+5,110,<NUM> L3 <*> error(s) (dcr <HEX>) detected and corrected,0.0,INFO
+51,97,rts panic! - stopping execution,1.0,FATAL
+20,93,machine check <*>,0.010752688172043012,FATAL
+19,93,instruction address: <HEX>,0.0,FATAL
+32,92,external input interrupt enable...<NUM>,0.0,FATAL
+30,92,wait state enable.................<NUM>,0.0,FATAL
+31,92,critical input interrupt enable...<NUM>,0.0,FATAL
+29,92,machine state register: <HEX>,0.0,FATAL
+33,92,"problem state (<NUM>=sup,<NUM>=usr).......<NUM>",0.0,FATAL
+50,92,<*> cr:<NUM> xer:<NUM> <*>,0.0,FATAL
+43,92,disable trace broadcast..................<NUM>,0.0,FATAL
+41,92,disable store gathering..................<NUM>,0.0,FATAL
+42,92,disable apu instruction broadcast........<NUM>,0.0,FATAL
+39,92,data address space................<NUM>,0.0,FATAL
+38,92,instruction address space.........<NUM>,0.0,FATAL
+37,92,debug interrupt enable............<NUM>,0.0,FATAL
+40,92,core configuration register: <HEX>,0.0,FATAL
+45,92,force load/store alignment...............<NUM>,0.0,FATAL
+49,92,special purpose registers:,0.0,FATAL
+47,92,general purpose registers:,0.0,FATAL
+36,92,debug wait enable.................<NUM>,0.0,FATAL
+34,92,floating point instr. enabled.....<NUM>,0.0,FATAL
+54,90,rts internal error,0.0,FATAL
+53,90,data address: <HEX>,0.0,FATAL
+56,55,ciod: pollControlDescriptors: Detected the debugger died.,0.0,INFO
+12,47,<NUM> tree receiver <NUM> in re-synch state event(s) (dcr <HEX>) detected,0.0,INFO
+2,35,MidplaneSwitchController performing bit sparing on <*> bit <NUM>,0.0,INFO
+8,29,ddr: activating redundant bit steering: rank=<NUM> symbol=<NUM>,0.0,INFO
+9,5,"ddr: excessive soft failures, consider replacing the card",0.0,INFO
+27,4,d-cache <*> parity <*>,0.0,FATAL
+24,4,data <*> plb <*>,0.0,FATAL
+22,2,summary...........................<NUM>,0.0,FATAL
+23,2,instruction plb error.............<NUM>,0.0,FATAL
+21,2,machine check status register: <HEX>,0.0,FATAL
+25,2,tlb error.........................<NUM>,0.0,FATAL
+28,2,imprecise machine check...........<NUM>,0.0,FATAL
+26,2,i-cache parity error..............<NUM>,0.0,FATAL
+13,1,idoproxydb has been started: $Name: DRV142_<NUM> $ Input parameters: -enableflush -loguserinfo db.properties BlueGene1,0.0,INFO
+15,1,mmcs_db_server has been started: ./mmcs_db_server --useDatabase BGL --dbproperties serverdb.properties --iolog /bgl/BlueLight/logs/BGL --reconnect-blocks all,0.0,INFO
+14,1,ciodb has been restarted.,0.0,INFO
+59,1,machine check interrupt (bit=<HEX>): L2 dcache unit data parity error,1.0,FATAL
