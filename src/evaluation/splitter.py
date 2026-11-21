@@ -42,19 +42,27 @@ class TimeSeriesDataSplitter:
         episodes_df: Optional[pd.DataFrame] = None,
     ):
         """
-        Khởi tạo TimeSeriesDataSplitter
-        :param buffer_gap_mins: Khoảng cách đệm an toàn giữa Train và Test (phút)
-        :param clean_train_only: Nếu True, lọc sạch nhãn bất thường khỏi train_df
-        :param timestamp_col: Cột mốc thời gian (epoch giây hoặc datetime)
-        :param anomaly_col: Cột nhãn bất thường (0: bình thường, 1: bất thường)
-        :param episodes_df: DataFrame danh sách episode (nếu chia theo episode)
+        Khoi tao TimeSeriesDataSplitter
+        :param buffer_gap_mins: Khoang cach dem an toan giua Train va Test (phut)
+        :param clean_train_only: Neu True, loc nhan bat thuong khoi train_df
+        :param timestamp_col: Cot moc thoi gian
+        :param anomaly_col: Cot nhan bat thuong
+        :param episodes_df: DataFrame danh sach episode
         """
+
+        # Kiem tra buffer gap toi thieu 60 phut
+        if buffer_gap_mins < 60:
+            raise ValueError(
+                "buffer_gap_mins phai lon hon hoac bang 60 phut."
+            )
+
+        # Chuyen doi phut sang giay
         self.buffer_gap_seconds = buffer_gap_mins * 60
+
         self.clean_train_only = clean_train_only
         self.timestamp_col = timestamp_col
         self.anomaly_col = anomaly_col
-        self.episodes_df = episodes_df
-
+        self.episodes_df = episodes_df    
     @classmethod
     def from_yaml(cls, config_path: str, episodes_df: Optional[pd.DataFrame] = None):
         """Tạo đối tượng splitter từ file cấu hình config/experiment.yaml"""
