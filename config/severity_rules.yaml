@@ -1,0 +1,66 @@
+# ==============================================================================
+# SEVERITY MAPPING & ESCALATION RULES - TASK K6
+# Đề tài N3.10: Phát hiện bất thường trong log và dữ liệu vận hành mạng
+# Khớp chuẩn docs/alert_schema.md (K3) & docs/severity_rules.md (K6)
+# ==============================================================================
+
+version: "1.0.0"
+
+levels:
+  LOW: 1
+  MEDIUM: 2
+  HIGH: 3
+  CRITICAL: 4
+
+# Ngưỡng leo thang toàn cục (áp dụng chung cho mọi detector & dedup)
+escalation:
+  # Sự cố kéo dài > 10 phút (> 600 giây) trong cùng đợt -> nâng lên CRITICAL
+  prolonged_incident_sec: 600
+  # Khi FATAL + Isolation Forest cùng kích hoạt trên 1 cửa sổ -> CRITICAL
+  fatal_plus_if_critical: true
+  # Số dòng FATAL đơn lẻ quá lớn trong 1 cửa sổ 5 phút -> CRITICAL
+  extreme_fatal_count: 1000
+  # Số detector độc lập cùng kích hoạt trên 1 cửa sổ >= 3 -> CRITICAL
+  min_detectors_for_critical: 3
+
+# Quy tắc ánh xạ mặc định theo từng loại cảnh báo (alert_type)
+rules:
+  RULE_FATAL_LOG:
+    default_severity: "MEDIUM"
+    high_fatal_count: 100
+    critical_fatal_count: 1000
+
+  RULE_ERROR_SPIKE:
+    default_severity: "MEDIUM"
+    high_ratio_multiplier: 2.0      # score >= 2 * threshold -> HIGH
+    critical_ratio_multiplier: 5.0  # score >= 5 * threshold -> CRITICAL
+
+  ZSCORE_LOG_VOLUME:
+    low_min: 2.0
+    medium_min: 3.0                 # z-score > 3.0 -> MEDIUM
+    high_min: 5.0                   # z-score > 5.0 -> HIGH
+    critical_min: 10.0              # z-score >= 10.0 (kèm lỗi hoặc cực đoan) -> CRITICAL
+
+  ZSCORE_SEVERITY_SPIKE:
+    low_min: 2.0
+    medium_min: 3.0
+    high_min: 5.0
+    critical_min: 8.0
+
+  IF_MULTIVARIATE:
+    default_severity: "HIGH"        # Isolation Forest vượt ngưỡng phân vị 99% -> HIGH
+    low_fallback: "MEDIUM"          # Nếu gọi khi score < threshold
+
+  IF_TEMPLATE_DRIFT:
+    default_severity: "HIGH"
+    critical_new_tpl_lines: 200
+
+  NEW_TEMPLATE:
+    low_max_lines: 4                # < 5 dòng -> LOW
+    medium_max_lines: 50            # 5..50 dòng -> MEDIUM
+    high_min_lines: 51              # > 50 dòng -> HIGH
+
+  RARE_TEMPLATE_BURST:
+    default_severity: "MEDIUM"
+    high_min_lines: 50
+    critical_min_lines: 500
