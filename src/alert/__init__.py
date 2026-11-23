@@ -14,7 +14,12 @@ from src.alert.alert_factory import (
     epoch_to_iso_utc,
     validate_alert,
 )
-from src.alert.dedup import AlertDeduplicator, DedupStats, build_incident_key
+try:
+    from src.alert.dedup import AlertDeduplicator, DedupStats, build_incident_key
+except ImportError:
+    AlertDeduplicator = None  # type: ignore
+    DedupStats = None  # type: ignore
+    build_incident_key = None  # type: ignore
 from src.alert.severity import (
     SEVERITY_SCORES,
     SeverityDecision,

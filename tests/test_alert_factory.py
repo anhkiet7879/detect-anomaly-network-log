@@ -109,7 +109,7 @@ def test_create_alert_has_exact_16_schema_fields(factory):
     assert data["severity"] == "CRITICAL"  # IF + FATAL -> leo thang CRITICAL
     assert data["severity_score"] == 4
     assert data["playbook_id"] == "PB-004"
-    assert data["dedup_key"] == "bgl:Isolation_Forest:IF_MULTIVARIATE:1118765100"
+    assert data["dedup_key"] == "bgl:Isolation_Forest:IF_MULTIVARIATE"
 
     # Kiểm tra JSON & DB serialization
     parsed = json.loads(alert.to_json())
@@ -226,8 +226,8 @@ def test_validate_alert_detects_schema_violations(factory):
 def test_helpers_epoch_and_dedup_key():
     assert epoch_to_iso_utc(1117869872) == "2005-06-04T07:24:32Z"
     assert (
-        build_dedup_key("bgl", "Rule_FATAL", "RULE_FATAL_LOG", 1118765100)
-        == "bgl:Rule_FATAL:RULE_FATAL_LOG:1118765100"
+        build_dedup_key("bgl", "Rule_FATAL", "RULE_FATAL_LOG")
+        == "bgl:Rule_FATAL:RULE_FATAL_LOG"
     )
     rec = AlertRecord.from_dict(
         AlertFactory()
