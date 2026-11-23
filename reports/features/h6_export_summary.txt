@@ -1,0 +1,28 @@
+===== [H6] XUẤT ĐẶC TRƯNG CỬA SỔ 5 PHÚT (BỘ A) — bgl_parsed.csv =====
+Đầu vào        : data\processed\bgl_parsed.csv  (4,747,953 dòng)
+Đầu ra         : data\features\bgl_windows_A.parquet  (1.0 MB)
+Thời gian      : đọc 4.2 giây, tổng 7.5 giây
+Khoảng thời gian: 2005-06-03T22:40Z -> 2006-01-04T16:00Z
+Cửa sổ trống   : CÓ thêm (điền 0)
+
+Số cửa sổ      : 61,841  (có log: 14,494 = 23.4%)
+Cửa sổ alert   : 1,054  (1.70% tổng số cửa sổ, 7.27% số cửa sổ có log)
+Số cột         : 26 (đặc trưng bộ A: 20; f_sev_*: 7; f_comp_*: 10)
+
+--- Tự kiểm tra ---
+Tổng f_n_logs = số dòng (4,747,953)                 : ĐẠT
+Tổng gt_alert_lines = số dòng alert (348,460)    : ĐẠT
+Tổng f_sev_* = f_n_logs ở mọi cửa sổ                    : ĐẠT
+Tổng f_comp_* = f_n_logs ở mọi cửa sổ                   : ĐẠT
+ts_epoch tăng dần, cách đều 300 giây (khi có cửa sổ trống): ĐẠT
+Đọc lại file Parquet giống hệt bảng đã ghi               : ĐẠT
+Không có cột gt_/y trong danh sách đặc trưng             : ĐẠT
+
+--- Kiểu dữ liệu (để Phước/Kiệt đọc đúng) ---
+  ts_epoch:int64, ts_utc:str, source:str, y:int8, gt_alert_lines:int64, gt_alert_types:str, f_n_logs:int64
+
+--- Cách đọc ---
+  import pandas as pd
+  w = pd.read_parquet(r"data\features\bgl_windows_A.parquet")
+  # hoặc: from features.window_features import load_windows; w = load_windows(path)
+  # chọn đặc trưng bộ A: from features.window_features import feature_columns; X = w[feature_columns(w, ('A',))]
