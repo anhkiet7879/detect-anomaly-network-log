@@ -138,3 +138,11 @@ Toàn bộ hệ thống được container hóa qua `docker-compose.yml`, kiểm
 | **Alert Engine & Playbook**| Điểm bất thường từ Detectors | `alerts` record (JSON 16 trường) | Kiệt (K3, K5–K10) |
 | **DB & Dashboards** | Alert record + Log thô | PostgreSQL tables + Grafana Panels | Phước (P5–P8, P9) |
 | **Independent Testing** | Toàn bộ hệ thống | Báo cáo kiểm thử, Precision/Recall/F1/MCC | Khang (T1–T6) |
+
+> **Ghi chú chuẩn hóa Hợp đồng Detectors Interface (Dòng 137):**
+> - **Chiều điểm số (`anomaly_scores`):** Quy ước thống nhất toàn hệ thống là **điểm càng cao càng bất thường** (với Isolation Forest: `score = -score_samples()`, không coi là xác suất).
+> - **Ngưỡng quyết định (`threshold`):** Lấy theo giá trị phân vị 99% (quantile 0.99) của `score` trên tập `train_df`.
+> - **Phân loại nhãn cảnh báo (`alert_type`):**
+>   - Nếu đặc trưng lệch nhất nằm trong nhóm template (`f_n_new_tpl_lines`, `f_n_rare_tpl_lines`, `f_tpl_*`) $\rightarrow$ gán `IF_TEMPLATE_DRIFT`.
+>   - Ngược lại (lệch về tổng log, node, severity...) $\rightarrow$ gán `IF_MULTIVARIATE`.
+> - **Cấu trúc Evidence:** Trả về top 3 đặc trưng có độ lệch chuẩn (z-score) lớn nhất so với phân phối tập Train: `{"name", "value", "train_mean", "train_std", "z"}`.
