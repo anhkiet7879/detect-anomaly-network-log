@@ -76,7 +76,7 @@ class _ActiveIncident:
     peak_score: float = 0.0
     merged_alert_ids: List[str] = field(default_factory=list)
     window_timestamps: List[int] = field(default_factory=list)
-    seen_dedup_keys: set = field(default_factory=set)
+    seen_timestamps: set = field(default_factory=set)
 
 
 def build_incident_key(
@@ -160,11 +160,12 @@ class AlertDeduplicator:
         inc.record.evidence["deduplication"] = dedup_meta
 
     def _apply_prolonged_escalation(self, inc: _ActiveIncident) -> None:
-        """Nếu sự cố kéo dài vượt ngưỡng (> 10 phút), leo thang lên CRITICAL (K6)."""
+        """Nếu sự cố kéo dài vượt ngưỡng (> 10 phút hoặc >= 3 cửa sổ liên tiếp), leo thang lên CRITICAL (K6)."""
         if not self.enable_prolonged_escalation:
             return
         duration_sec = max(0, inc.last_ts_epoch - inc.first_ts_epoch)
-        if duration_sec <= 0:
+        consecutive_wins = len(inc.window_timestamps)
+        if duration_sec <= 0 and consecutive_wins <= 1:
             return
 
         current_lvl = SeverityLevel.from_name(inc.record.severity)
@@ -177,6 +178,7 @@ class AlertDeduplicator:
             threshold=inc.record.threshold,
             features=inc.record.evidence.get("features", {}),
             incident_duration_sec=duration_sec,
+            consecutive_windows=consecutive_wins,
         )
         if decision.severity_score > inc.record.severity_score:
             old_sev = inc.record.severity
@@ -209,7 +211,7 @@ class AlertDeduplicator:
         if incoming.alert_id != inc.record.alert_id and incoming.alert_id not in inc.merged_alert_ids:
             inc.merged_alert_ids.append(incoming.alert_id)
 
-        inc.seen_dedup_keys.add(incoming.dedup_key)
+        inc.seen_timestamps.add(incoming.ts_epoch)
         inc.first_ts_epoch = min(inc.first_ts_epoch, incoming.ts_epoch)
         inc.last_ts_epoch = max(inc.last_ts_epoch, incoming.ts_epoch)
 
@@ -255,8 +257,8 @@ class AlertDeduplicator:
 
         active = self._active.get(key)
         if active is not None:
-            # Kiểm tra trùng chính xác dedup_key
-            if record.dedup_key in active.seen_dedup_keys:
+            # Kiểm tra trùng chính xác cùng mốc thời gian (ts_epoch)
+            if record.ts_epoch in active.seen_timestamps:
                 self._merge_into_incident(active, record, is_exact=True)
                 return "MERGED_EXACT", active.record
 
@@ -279,7 +281,7 @@ class AlertDeduplicator:
             peak_score=record.score,
             merged_alert_ids=[],
             window_timestamps=[record.ts_epoch],
-            seen_dedup_keys={record.dedup_key},
+            seen_timestamps={record.ts_epoch},
         )
         self._sync_dedup_evidence(inc)
         self._active[key] = inc
