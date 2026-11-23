@@ -132,6 +132,11 @@ def test_escalation_prolonged_incident_over_10_mins(mapper):
     assert d_long.severity == "CRITICAL"
     assert d_long.matched_rule == "ESCALATION_PROLONGED_INCIDENT"
 
+    # Hoặc liên tiếp >= 3 cửa sổ (15 phút) -> CRITICAL (Zero Data Leakage)
+    d_windows = mapper.map_severity("ZSCORE_LOG_VOLUME", score=3.5, threshold=3.0, consecutive_windows=3)
+    assert d_windows.severity == "CRITICAL"
+    assert d_windows.matched_rule == "ESCALATION_PROLONGED_INCIDENT"
+
 
 def test_escalation_three_concurrent_detectors(mapper):
     d = mapper.map_severity(

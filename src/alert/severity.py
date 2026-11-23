@@ -381,11 +381,12 @@ class SeverityMapper:
         concurrent_alert_types: Optional[Sequence[str]] = None,
         concurrent_detectors: Optional[Sequence[str]] = None,
         incident_duration_sec: float = 0.0,
+        consecutive_windows: int = 1,
     ) -> SeverityDecision:
         """
         Kiểm tra các quy tắc leo thang mức nghiêm trọng lên CRITICAL (K3 & K6):
           1. Có log FATAL + Isolation Forest phát hiện đồng thời.
-          2. Đợt sự cố kéo dài > 10 phút (> 600 giây).
+          2. Detector cảnh báo liên tiếp >= 3 cửa sổ (15 phút) HOẶC sự cố kéo dài > 10 phút (Zero Data Leakage).
           3. Có >= 3 detector độc lập cùng báo động trên cùng cửa sổ.
         """
         feats = features or {}
@@ -406,14 +407,20 @@ class SeverityMapper:
                 "Leo thang CRITICAL: Phát hiện đồng thời log FATAL và bất thường Isolation Forest",
             )
 
-        # Luật leo thang 2: Sự cố kéo dài > 10 phút (> 600 giây)
+        # Luật leo thang 2: Detector cảnh báo liên tiếp >= 3 cửa sổ (15 phút) HOẶC sự cố kéo dài > 600s
+        min_consec = int(self.escalation_cfg.get("min_consecutive_windows", 3))
         prolonged_sec = _safe_float(self.escalation_cfg.get("prolonged_incident_sec", 600))
-        if incident_duration_sec > prolonged_sec:
+        if (consecutive_windows >= min_consec and min_consec > 1) or incident_duration_sec > prolonged_sec:
+            reason = (
+                f"Leo thang CRITICAL: Detector cảnh báo liên tiếp {consecutive_windows} cửa sổ (>= {min_consec})"
+                if consecutive_windows >= min_consec
+                else f"Leo thang CRITICAL: Đợt sự cố kéo dài {int(incident_duration_sec)}s (> {int(prolonged_sec)}s)"
+            )
             return SeverityDecision(
                 "CRITICAL",
                 int(SeverityLevel.CRITICAL),
                 "ESCALATION_PROLONGED_INCIDENT",
-                f"Leo thang CRITICAL: Đợt sự cố kéo dài {int(incident_duration_sec)}s (> {int(prolonged_sec)}s)",
+                reason,
             )
 
         # Luật leo thang 3: Nhiều detector độc lập cùng xác nhận (>= 3)
@@ -437,6 +444,7 @@ class SeverityMapper:
         concurrent_alert_types: Optional[Sequence[str]] = None,
         concurrent_detectors: Optional[Sequence[str]] = None,
         incident_duration_sec: float = 0.0,
+        consecutive_windows: int = 1,
     ) -> SeverityDecision:
         """
         Điểm vào chính (Single Entry Point) để tính Severity cho một cảnh báo.
@@ -451,6 +459,7 @@ class SeverityMapper:
             concurrent_alert_types=concurrent_alert_types,
             concurrent_detectors=concurrent_detectors,
             incident_duration_sec=incident_duration_sec,
+            consecutive_windows=consecutive_windows,
         )
         # Luôn giữ mức cao hơn giữa base và escalated
         if final.severity_score >= base.severity_score:

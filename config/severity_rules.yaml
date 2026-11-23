@@ -14,7 +14,9 @@ levels:
 
 # Ngưỡng leo thang toàn cục (áp dụng chung cho mọi detector & dedup)
 escalation:
-  # Sự cố kéo dài > 10 phút (> 600 giây) trong cùng đợt -> nâng lên CRITICAL
+  # Tiêu chí Zero Data Leakage: Detector cảnh báo liên tiếp >= 3 cửa sổ (15 phút) -> nâng lên CRITICAL
+  min_consecutive_windows: 3
+  # Hỗ trợ đợt sự cố kéo dài theo giây (> 600s / 10 phút)
   prolonged_incident_sec: 600
   # Khi FATAL + Isolation Forest cùng kích hoạt trên 1 cửa sổ -> CRITICAL
   fatal_plus_if_critical: true

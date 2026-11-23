@@ -45,7 +45,7 @@ Sau khi tính mức cơ sở, hệ thống luôn áp dụng 3 quy tắc leo than
 1. **Xác nhận chéo FATAL + Isolation Forest (`ESCALATION_FATAL_PLUS_IF`):**
    - Nếu trên cùng cửa sổ 5 phút vừa có log mức `FATAL` (`f_sev_FATAL > 0` hoặc `RULE_FATAL_LOG`) **vừa** bị `Isolation Forest` (`IF_MULTIVARIATE` / `IF_TEMPLATE_DRIFT`) gắn cờ $\rightarrow$ tự động nâng lên `CRITICAL (4)`.
 2. **Đợt sự cố kéo dài (`ESCALATION_PROLONGED_INCIDENT`):**
-   - Khi module gộp cảnh báo lặp (`dedup.py` – K7) gộp nhiều cửa sổ liên tiếp cùng sự cố và tổng thời lượng vượt quá **10 phút** (`duration_sec > 600`) $\rightarrow$ tự động nâng lên `CRITICAL (4)`.
+   - Khi module gộp cảnh báo lặp (`dedup.py` – K7) phát hiện detector cảnh báo liên tiếp $\ge 3$ cửa sổ (15 phút) HOẶC tổng thời lượng vượt quá **10 phút** (`duration_sec > 600`) $\rightarrow$ tự động nâng lên `CRITICAL (4)` (tuân thủ nguyên tắc Zero Data Leakage).
 3. **Đồng thuận đa tầng (`ESCALATION_MULTI_DETECTOR`):**
    - Nếu có $\ge 3$ detector độc lập cùng kích hoạt cảnh báo trên cùng cửa sổ 5 phút $\rightarrow$ tự động nâng lên `CRITICAL (4)`.
 
