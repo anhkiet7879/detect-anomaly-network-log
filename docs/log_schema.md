@@ -30,7 +30,7 @@
 | 8 | `severity_raw` | string | ✅ | Mức nghiêm trọng nguyên văn từ log gốc, không chuẩn hóa. | `"FATAL"` | `"error"` |
 | 9 | `severity_norm` | int (0–7) | ⬚ | Mức nghiêm trọng đã ánh xạ sang thang syslog RFC 5424 (0=Emergency … 7=Debug). Để trống nếu không ánh xạ được. | `2` (Critical) | `3` (Error) |
 | 10 | `message` | string | ✅ | Nội dung chính của dòng log, nguyên văn. Có thể rỗng. Đây là đầu vào cho Drain3 (`LogTemplateExtractor`). | `"data TLB error interrupt"` | `"Failed password for invalid user webmaster from 173.234.31.186 port 38926 ssh2"` |
-| 11 | `gt_alert_type` | string | ⬚ | **Nhãn chân lý** — Tên loại bất thường. `"NORMAL"` hoặc rỗng nếu dòng bình thường. **KHÔNG BAO GIỜ** dùng làm đặc trưng mô hình. | `"KERNDTLB"` | `"BRUTEFORCE"` |
+| 11 | `gt_alert_type` | string | ⬚ | **Nhãn chân lý** — Tên loại bất thường. Điền `"NORMAL"` nếu dòng bình thường (không để ô rỗng để tránh pandas parse thành NaN). **KHÔNG BAO GIỜ** dùng làm đặc trưng mô hình. | `"KERNDTLB"` | `"BRUTEFORCE"` |
 | 12 | `gt_is_alert` | int8 (0/1) | ⬚ | **Nhãn chân lý** — 1 = bất thường, 0 = bình thường. **KHÔNG BAO GIỜ** dùng làm đặc trưng mô hình. | `1` | `0` |
 
 ---
