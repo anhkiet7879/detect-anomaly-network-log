@@ -44,6 +44,8 @@ if PROJECT_ROOT not in sys.path:
 from src.evaluation.splitter import SplitFold, TimeSeriesDataSplitter
 from src.features.window_features import load_windows
 
+BASELINE_PREDICTION_COLUMNS = ["scenario", "fold", "ts_epoch", "y_true", "y_pred", "score"]
+
 
 # ==============================================================================
 # 1. GIAO DIỆN CHUẨN DETECTOR (INTERFACE CONTRACT 4)
@@ -277,10 +279,11 @@ class EvaluationRunner:
         scenario_name: str,
         scenario_cfg: Dict,
         detectors: Optional[Dict[str, BaseDetector]] = None,
+        *,
+        baseline_predictions: Optional[List[pd.DataFrame]] = None,
     ) -> pd.DataFrame:
         """Thực thi một kịch bản chia cụ thể trên toàn bộ detectors."""
-        if detectors is None:
-            detectors = self.get_registered_detectors()
+        use_default_detectors = detectors is None
 
         results = []
         splits = list(self.splitter.split_by_scenario(df, scenario_name, scenario_cfg))
@@ -288,10 +291,31 @@ class EvaluationRunner:
         for fold in splits:
             y_test = fold.test_df[self.target_col].to_numpy(int)
 
-            for det_name, det_model in detectors.items():
+            # Khởi tạo detector mới cho mỗi fold để tránh giữ trạng thái cũ.
+            fold_detectors = (
+                self.get_registered_detectors()
+                if use_default_detectors
+                else detectors
+            )
+
+            for det_name, det_model in fold_detectors.items():
                 # RESET STATE HOÀN TOÀN: fit trên train_df đã được clean
                 det_model.fit(fold.train_df)
                 y_pred, scores = det_model.predict(fold.test_df)
+
+                if baseline_predictions is not None and det_name == "Baseline_ZScore":
+                    baseline_predictions.append(
+                        pd.DataFrame(
+                            {
+                                "scenario": scenario_name,
+                                "fold": fold.fold_idx,
+                                "ts_epoch": fold.test_df[self.splitter.timestamp_col].to_numpy(),
+                                "y_true": y_test,
+                                "y_pred": y_pred,
+                                "score": scores,
+                            }
+                        )
+                    )
 
                 m = self._calc_metrics(y_test, y_pred)
                 record = {
@@ -321,12 +345,15 @@ class EvaluationRunner:
             df = load_windows(features_path)
 
         all_fold_results = []
+        baseline_predictions = [] if self.cfg.get("output", {}).get("save_predictions", False) else None
         scenarios = self.cfg.get("scenarios", {})
 
         print(f"=== BẮT ĐẦU CHẠY ĐÁNH GIÁ ĐA KỊCH BẢN (TỔNG {len(scenarios)} SCENARIOS) ===")
         for sc_name, sc_cfg in scenarios.items():
             print(f"-> Đang thực thi kịch bản: {sc_name}...")
-            df_sc = self.run_scenario(df, sc_name, sc_cfg)
+            df_sc = self.run_scenario(
+                df, sc_name, sc_cfg, baseline_predictions=baseline_predictions
+            )
             all_fold_results.append(df_sc)
 
         df_all = pd.concat(all_fold_results, ignore_index=True)
@@ -352,6 +379,14 @@ class EvaluationRunner:
         summary_csv_path = os.path.join(self.reports_dir, "evaluation_mean_std_summary.csv")
         df_all.to_csv(raw_csv_path, index=False)
         df_summary.to_csv(summary_csv_path, index=False)
+
+        if baseline_predictions is not None:
+            predictions = (
+                pd.concat(baseline_predictions, ignore_index=True)
+                if baseline_predictions
+                else pd.DataFrame(columns=BASELINE_PREDICTION_COLUMNS)
+            )
+            predictions.to_csv(os.path.join(self.reports_dir, "baseline_predictions.csv"), index=False)
 
         print(f" Đã lưu kết quả chi tiết từng fold tại: {raw_csv_path}")
         print(f" Đã lưu kết quả tổng hợp Mean ± Std tại: {summary_csv_path}")
