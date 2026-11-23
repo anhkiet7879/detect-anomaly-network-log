@@ -30,13 +30,13 @@ Mỗi detector khi phát hiện bất thường trên 1 cửa sổ 5 phút sẽ 
 | 6 | `alert_type` | string | ✅ | Mã loại cảnh báo (tra Playbook). Xem bảng mã ở mục 3. |
 | 7 | `severity` | string | ✅ | Mức nghiêm trọng: `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`. Xem bảng ánh xạ ở mục 4. |
 | 8 | `severity_score` | int (1–4) | ✅ | Giá trị số tương ứng severity (1=LOW … 4=CRITICAL), dùng để sắp xếp. |
-| 9 | `score` | float | ✅ | Điểm bất thường do detector tính (ý nghĩa tùy loại detector). |
-| 10 | `threshold` | float | ✅ | Ngưỡng mà detector đã dùng để so sánh với `score`. |
+| 9 | `score` | float | ✅ | Điểm bất thường do detector tính. **Quy ước toàn hệ thống:** Điểm càng cao càng bất thường (với Isolation Forest: `score = -score_samples()`, không coi là xác suất). |
+| 10 | `threshold` | float | ✅ | Ngưỡng mà detector đã dùng để so sánh với `score` (với Isolation Forest: ngưỡng lấy theo phân vị 99% trên tập huấn luyện Train). |
 | 11 | `title` | string | ✅ | Tiêu đề ngắn gọn cho con người đọc nhanh (~80 ký tự). |
 | 12 | `description` | string | ✅ | Mô tả chi tiết bao gồm bối cảnh cửa sổ. |
 | 13 | `evidence` | object (JSON) | ✅ | Bằng chứng kỹ thuật. Cấu trúc chi tiết ở mục 5. |
 | 14 | `playbook_id` | string | ⬚ | Mã Playbook áp dụng (VD: `"PB-001"`). Để trống nếu chưa gán. |
-| 15 | `dedup_key` | string | ✅ | Khóa chống trùng lặp: `"{source}:{detector}:{alert_type}:{ts_epoch}"`. Alert Engine dùng khóa này để gộp bão cảnh báo. |
+| 15 | `dedup_key` | string | ✅ | Khóa chống trùng lặp theo sự cố: `"{source}:{detector}:{alert_type}"` (khớp ADR-04). Alert Engine dùng khóa này kết hợp cửa sổ trượt (Sliding Time-Window 15–30 phút) để gộp bão cảnh báo. |
 | 16 | `created_at` | string | ✅ | Mốc thời gian thực tế hệ thống tạo alert (ISO 8601 UTC). |
 
 ---
@@ -60,10 +60,10 @@ Mỗi detector khi phát hiện bất thường trên 1 cửa sổ 5 phút sẽ 
 
 | Mức | Giá trị | Tiêu chí |
 |---|:---:|---|
-| `CRITICAL` | 4 | Có log FATAL + Isolation Forest phát hiện đồng thời, HOẶC cửa sổ nằm trong đợt sự cố kéo dài > 10 phút |
-| `HIGH` | 3 | Isolation Forest vượt ngưỡng (phân vị 99%) HOẶC z-score > 5 HOẶC template mới + hơn 50 dòng |
-| `MEDIUM` | 2 | Rule FATAL đơn lẻ HOẶC z-score > 3 HOẶC template hiếm bất ngờ |
-| `LOW` | 1 | Z-score 2–3 HOẶC template mới nhưng ít dòng (< 5) |
+| `CRITICAL` | 4 | Có log FATAL + Isolation Forest phát hiện đồng thời, HOẶC detector cảnh báo liên tiếp ≥ 3 cửa sổ (15 phút) trên cùng nguồn |
+| `HIGH` | 3 | Isolation Forest vượt ngưỡng (phân vị 99%) HOẶC z-score > 5 |
+| `MEDIUM` | 2 | Rule FATAL đơn lẻ HOẶC z-score > 3 HOẶC template mới xuất hiện (f_n_new_tpl_lines > 0) HOẶC template hiếm bất ngờ |
+| `LOW` | 1 | Z-score 2–3 HOẶC template mới nhưng chỉ 1–2 dòng (< 5) |
 
 > **Lưu ý:** Khi nhiều detector cùng cảnh báo trên 1 cửa sổ, Alert Engine chọn severity **cao nhất** làm severity cuối cùng của cửa sổ đó.
 
@@ -95,9 +95,9 @@ Trường `evidence` chứa bối cảnh giúp kỹ sư vận hành hiểu **t�
     "threshold": 0.634,
     "contamination": 0.01,
     "top_features": [
-      {"name": "f_sev_FATAL", "value": 16384, "contribution": 0.72},
-      {"name": "f_n_logs", "value": 16422, "contribution": 0.15},
-      {"name": "f_n_nodes", "value": 512, "contribution": 0.08}
+      {"name": "f_sev_FATAL", "value": 16384, "train_mean": 12.5, "train_std": 45.1, "z": 362.9},
+      {"name": "f_n_logs", "value": 16422, "train_mean": 215.4, "train_std": 85.2, "z": 190.2},
+      {"name": "f_n_nodes", "value": 512, "train_mean": 8.1, "train_std": 3.4, "z": 148.2}
     ]
   },
   "context": {
