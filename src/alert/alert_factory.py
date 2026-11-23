@@ -95,9 +95,14 @@ def now_iso_utc() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def build_dedup_key(source: str, detector: str, alert_type: str, ts_epoch: int) -> str:
-    """Sinh khóa chống trùng lặp theo đúng K3: {source}:{detector}:{alert_type}:{ts_epoch}."""
-    return f"{source}:{detector}:{alert_type}:{int(ts_epoch)}"
+def build_dedup_key(
+    source: str, detector: str, alert_type: str, ts_epoch: Optional[int] = None
+) -> str:
+    """
+    Sinh khóa chống trùng lặp theo đúng ADR-04 & K3 mới: {source}:{detector}:{alert_type}.
+    Tham số ts_epoch giữ lại để tương thích ngược nếu truyền vào nhưng không đưa vào key.
+    """
+    return f"{source}:{detector}:{alert_type}"
 
 
 def _to_native(value: Any) -> Any:
@@ -262,9 +267,9 @@ def validate_alert(alert: AlertRecord | Mapping[str, Any]) -> Tuple[bool, List[s
             if required_block not in ev or not isinstance(ev[required_block], dict):
                 errors.append(f"'evidence' thiếu khối bắt buộc '{required_block}'")
 
-    # 4. Kiểm tra cấu trúc dedup_key
+    # 4. Kiểm tra cấu trúc dedup_key theo chuẩn ADR-04 (source:detector:alert_type)
     expected_dedup = build_dedup_key(
-        data["source"], data["detector"], data["alert_type"], int(data["ts_epoch"])
+        data["source"], data["detector"], data["alert_type"]
     )
     if data["dedup_key"] != expected_dedup:
         errors.append(
@@ -423,8 +428,8 @@ class AlertFactory:
         # 2. Gắn Playbook ID (K3 & K10)
         pb_id = self.resolve_playbook_id(atype_clean, override=playbook_id)
 
-        # 3. Sinh dedup_key theo chuẩn K3
-        dedup_key = build_dedup_key(src_clean, det_clean, atype_clean, ts_int)
+        # 3. Sinh dedup_key theo chuẩn ADR-04 (source:detector:alert_type)
+        dedup_key = build_dedup_key(src_clean, det_clean, atype_clean)
 
         # 4. Đóng gói khối Evidence JSON chuẩn 4 phần (K3 mục 5)
         window_block: Dict[str, Any] = {
