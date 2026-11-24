@@ -71,7 +71,7 @@
 
 | Nguồn | Parser | Trạng thái | Ghi chú |
 |---|---|---|---|
-| **BGL** | `bgl_parse_v2.py` (Huy) | ✅ Tuân thủ 12 cột | Đã chạy trên 949k dòng. Xuất CSV + quarantine. |
+| **BGL** | `bgl_parse_v2.py` (Huy) | ✅ Tuân thủ 12 cột | Đã hoàn thành toàn bộ file (4.747.953/4.747.963 dòng, đạt 99.9998%, cách ly 10 dòng). Tuân thủ 12 cột, xuất bgl_parsed.csv + bgl_parsed_quarantine.txt. |
 | **OpenSSH** | *Chưa có* | 🔲 Cần viết (Task K19/H9) | Log dạng syslog, cần xử lý PID (`sshd[24200]`), thiếu năm. |
 | **TelecomTS** | *Adapter riêng* | 🔲 Cần viết (Task K20/H10) | Dữ liệu metric (CSV 19 cột số), không phải log text. Xem mục 5. |
 
