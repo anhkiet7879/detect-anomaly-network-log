@@ -91,6 +91,7 @@ Trường `evidence` chứa bối cảnh giúp kỹ sư vận hành hiểu **t�
   },
   "detector_detail": {
     "method": "isolation_forest",
+    "detector_version": "if_bgl_v1.0",
     "score": 0.892,
     "threshold": 0.634,
     "contamination": 0.01,
@@ -118,7 +119,7 @@ Trường `evidence` chứa bối cảnh giúp kỹ sư vận hành hiểu **t�
 |---|---|---|
 | `window` | Thông tin tổng quan cửa sổ: mốc thời gian, số dòng log, số dòng bất thường (ground-truth). | ✅ |
 | `features` | Giá trị các đặc trưng chính tại cửa sổ này (snapshot). | ✅ |
-| `detector_detail` | Chi tiết của detector: điểm, ngưỡng, phương pháp, và top 3 đặc trưng đóng góp lớn nhất (nếu tính được). | ✅ |
+| `detector_detail` | Chi tiết của detector: điểm, ngưỡng, phương pháp, phiên bản (`detector_version`) và top 3 đặc trưng đóng góp lớn nhất (nếu tính được). | ✅ |
 | `context` | Bối cảnh xung quanh: template phổ biến nhất, node bị ảnh hưởng, cửa sổ kế cận có cảnh báo không. | ⬚ |
 
 ---
@@ -168,7 +169,32 @@ Trường `evidence` chứa bối cảnh giúp kỹ sư vận hành hiểu **t�
   "description": "Isolation Forest phát hiện 16,422 dòng log trong cửa sổ 5 phút 16:05–16:10 UTC ngày 2005-06-14, gồm 16,384 dòng FATAL severity từ KERNEL/data storage interrupt trên 512 node. Điểm bất thường 0.892 vượt ngưỡng 0.634.",
   "evidence": { "...xem mục 5..." },
   "playbook_id": "PB-004",
-  "dedup_key": "bgl:Isolation_Forest:IF_MULTIVARIATE:1118765100",
+  "dedup_key": "bgl:Isolation_Forest:IF_MULTIVARIATE",
   "created_at": "2026-11-20T02:00:00Z"
 }
 ```
+
+---
+
+## 8. Operator Feedback Loop & Lưu trữ mở rộng (PostgreSQL & FastAPI)
+
+Để hỗ trợ kỹ sư vận hành xác nhận độ chính xác của cảnh báo (phục vụ đánh giá tỷ lệ False Positive và tinh chỉnh ngưỡng ở `config/detection.yaml`), bảng `alerts` trong PostgreSQL (Phước – P5) bổ sung 4 cột tùy chọn ngoài 16 trường cốt lõi của Alert JSON:
+
+| Tên cột | Kiểu PostgreSQL | Mặc định | Ý nghĩa & Giá trị hợp lệ |
+|---|---|---|---|
+| `status` | `VARCHAR(20)` | `'OPEN'` | Trạng thái xử lý cảnh báo: `OPEN`, `ACK`, `RESOLVED`. |
+| `operator_label` | `VARCHAR(30)` | `NULL` | Nhãn xác nhận của người vận hành: `TRUE_POSITIVE`, `FALSE_POSITIVE`, `BENIGN`. |
+| `operator_note` | `TEXT` | `NULL` | Ghi chú nguyên nhân hoặc hướng xử lý thực tế của kỹ sư NOC/SOC. |
+| `reviewed_at` | `TIMESTAMPTZ` | `NULL` | Thời điểm kỹ sư cập nhật phản hồi gần nhất. |
+
+### Hợp đồng API cập nhật Feedback (Huy – H10/H11)
+* **Endpoint:** `PATCH /alerts/{alert_id}/feedback`
+* **Request Body (JSON):**
+  ```json
+  {
+    "status": "RESOLVED",
+    "operator_label": "FALSE_POSITIVE",
+    "operator_note": "Bảo trì hệ thống định kỳ lúc 02:00 UTC"
+  }
+  ```
+* **Hành vi:** Cập nhật các trường tương ứng trong bảng `alerts` và tự động gán `reviewed_at = NOW()`.

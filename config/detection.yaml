@@ -1,0 +1,42 @@
+# ==============================================================================
+# DETECTION THRESHOLDS & MODEL VERSIONING CONFIGURATION
+# Đề tài N3.10: Phát hiện bất thường trong log và dữ liệu vận hành mạng
+# Đồng bộ với docs/alert_schema.md (K3) & docs/architecture.md (K4)
+# ==============================================================================
+
+# Phiên bản các bộ phát hiện (gắn vào evidence.detector_detail.detector_version)
+versions:
+  rule_version: "rule_v1.0"
+  zscore_version: "zscore_v1.0"
+  if_version: "if_bgl_v1.0"
+  drain3_version: "drain3_v1.0"
+
+# Tầng 1: Luật nghiệp vụ (Phước - P1)
+rule:
+  fatal_min_count: 1           # Cửa sổ có >= 1 dòng FATAL -> RULE_FATAL_LOG
+  error_spike_threshold: 50    # Cửa sổ có >= 50 dòng ERROR -> RULE_ERROR_SPIKE
+  new_template_min_lines: 1    # Xuất hiện template mới từ Drain3 -> NEW_TEMPLATE
+  rare_template_train_max: 10  # Template xuất hiện < 10 lần trên Train coi là hiếm
+  rare_template_burst_min: 10  # >= 10 dòng template hiếm trong 1 cửa sổ -> RARE_TEMPLATE_BURST
+
+# Tầng 2: Baseline thống kê Z-score / MAD (Phước - P3)
+zscore:
+  feature_col: "f_n_logs"
+  severity_col: "f_sev_FATAL"
+  threshold_low: 2.0           # 2.0 <= z <= 3.0 -> LOW
+  threshold_medium: 3.0        # z > 3.0 -> MEDIUM (ngưỡng cảnh báo mặc định)
+  threshold_high: 5.0          # z > 5.0 -> HIGH
+  threshold_critical: 10.0     # z >= 10.0 -> CRITICAL
+
+# Tầng 3: Machine Learning - Isolation Forest (Huy - H7)
+isolation_forest:
+  n_estimators: 100
+  contamination: 0.01          # Tỷ lệ ngoại lai kỳ vọng (1%)
+  score_quantile: 0.99         # Ngưỡng quyết định lấy theo phân vị 99% trên Train
+  random_state: 42
+  score_convention: "higher_is_more_anomalous"  # score = -score_samples()
+
+# Alert Engine & Deduplication (Kiệt - K5, K7 / ADR-04)
+alert_engine:
+  window_duration_sec: 300     # Cửa sổ Tumbling 5 phút (ADR-02)
+  dedup_window_minutes: 30     # Cửa sổ trượt gộp bão cảnh báo (ADR-04)
