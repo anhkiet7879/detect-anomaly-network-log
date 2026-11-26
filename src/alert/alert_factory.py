@@ -14,6 +14,7 @@ Chức năng chính:
 from __future__ import annotations
 
 import json
+import os
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -21,6 +22,11 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    yaml = None  # type: ignore[assignment]
 
 from src.alert.severity import SeverityDecision, SeverityLevel, SeverityMapper
 
@@ -168,14 +174,24 @@ class AlertRecord:
         """Xuất chuỗi JSON UTF-8 chuẩn."""
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=indent)
 
-    def to_db_row(self, status: str = "OPEN") -> Dict[str, Any]:
+    def to_db_row(
+        self,
+        status: str = "OPEN",
+        operator_label: Optional[str] = None,
+        operator_note: Optional[str] = None,
+        reviewed_at: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """
         Xuất bản ghi sẵn sàng nạp vào bảng PostgreSQL `alerts` (Phước P5).
         Trường `evidence` được chuyển thành chuỗi JSON để ghi vào cột JSONB.
+        Hỗ trợ thêm 4 cột Operator Feedback theo docs/alert_schema.md mục 8.
         """
         row = self.to_dict()
         row["evidence"] = json.dumps(row["evidence"], ensure_ascii=False)
         row["status"] = status
+        row["operator_label"] = operator_label
+        row["operator_note"] = operator_note
+        row["reviewed_at"] = reviewed_at
         return row
 
     @classmethod
@@ -290,12 +306,45 @@ class AlertFactory:
         severity_mapper: Optional[SeverityMapper] = None,
         playbook_map: Optional[Mapping[str, str]] = None,
         window_duration_sec: int = 300,
+        detection_config_path: str = "config/detection.yaml",
+        detector_versions: Optional[Mapping[str, str]] = None,
     ):
         self.severity_mapper = severity_mapper or SeverityMapper()
         self.playbook_map: Dict[str, str] = dict(ALERT_TYPE_TO_PLAYBOOK)
         if playbook_map:
             self.playbook_map.update(playbook_map)
         self.window_duration_sec = int(window_duration_sec)
+        self.detector_versions: Dict[str, str] = self._load_detector_versions(detection_config_path)
+        if detector_versions:
+            self.detector_versions.update({str(k): str(v) for k, v in detector_versions.items()})
+
+    @staticmethod
+    def _load_detector_versions(config_path: str) -> Dict[str, str]:
+        """Đọc mục `versions` từ config/detection.yaml (trả về {} nếu chưa có file)."""
+        if yaml is None or not config_path or not os.path.exists(config_path):
+            return {}
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f) or {}
+            versions = cfg.get("versions", {})
+            return {str(k): str(v) for k, v in versions.items()} if isinstance(versions, Mapping) else {}
+        except Exception:
+            return {}
+
+    def resolve_detector_version(self, detector: str, alert_type: str = "") -> Optional[str]:
+        """Ánh xạ tên detector/alert_type sang phiên bản cấu hình trong detection.yaml."""
+        if not self.detector_versions:
+            return None
+        key_text = f"{detector} {alert_type}".lower()
+        if "isolation" in key_text or "if_" in key_text:
+            return self.detector_versions.get("if_version")
+        if "zscore" in key_text or "z_score" in key_text or "z-score" in key_text:
+            return self.detector_versions.get("zscore_version")
+        if "drain" in key_text or "template" in key_text:
+            return self.detector_versions.get("drain3_version") or self.detector_versions.get("rule_version")
+        if "rule" in key_text:
+            return self.detector_versions.get("rule_version")
+        return None
 
     def resolve_playbook_id(self, alert_type: str, override: Optional[str] = None) -> str:
         if override is not None:
@@ -447,6 +496,9 @@ class AlertFactory:
             "threshold": threshold_f,
             "severity_rule": sev_decision.matched_rule,
         }
+        det_ver = self.resolve_detector_version(det_clean, atype_clean)
+        if det_ver:
+            detail_block["detector_version"] = det_ver
         if detector_detail:
             detail_block.update(_to_native(dict(detector_detail)))
 
