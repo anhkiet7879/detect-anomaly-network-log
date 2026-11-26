@@ -17,12 +17,12 @@ leakage_prevention:
 # Cấu hình dữ liệu
 data:
   dataset_name: "bgl"
-  features_path: "data/features/bgl_mvp_windows.csv"
+  features_path: "data/features/bgl_windows_A.parquet"
   episodes_path: "data/processed/bgl_episodes.csv"
   processed_parquet: "data/processed/bgl_parsed.parquet"
   processed_csv: "data/processed/bgl_parsed.csv"
   
-  # Các cột đặc trưng đầu vào (chỉ f_..., tuyệt đối không dùng gt_... hay y)
+  # Các cột đặc trưng đầu vào (Bộ A toàn bộ BGL - 20 cột; tuyệt đối không dùng gt_... hay y)
   features:
     - "f_n_logs"
     - "f_n_nodes"
@@ -33,6 +33,17 @@ data:
     - "f_sev_ERROR"
     - "f_sev_FATAL"
     - "f_sev_FAILURE"
+    - "f_sev_other"
+    - "f_comp_APP"
+    - "f_comp_BGLMASTER"
+    - "f_comp_CMCS"
+    - "f_comp_DISCOVERY"
+    - "f_comp_HARDWARE"
+    - "f_comp_KERNEL"
+    - "f_comp_LINKCARD"
+    - "f_comp_MMCS"
+    - "f_comp_MONITOR"
+    - "f_comp_SERV_NET"
   target_column: "y"
   timestamp_column: "ts_epoch"
   is_anomaly_column: "y"

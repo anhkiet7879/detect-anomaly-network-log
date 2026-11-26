@@ -41,6 +41,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from src.evaluation.splitter import SplitFold, TimeSeriesDataSplitter
+from src.features.window_features import load_windows
 
 
 # ==============================================================================
@@ -273,11 +274,11 @@ class EvaluationRunner:
         """
         if df is None:
             features_path = os.path.join(
-                PROJECT_ROOT, self.cfg.get("data", {}).get("features_path", "data/features/bgl_mvp_windows.csv")
+                PROJECT_ROOT, self.cfg.get("data", {}).get("features_path", "data/features/bgl_windows_A.parquet")
             )
             if not os.path.exists(features_path):
                 raise FileNotFoundError(f"Không tìm thấy file đặc trưng tại {features_path}")
-            df = pd.read_csv(features_path)
+            df = load_windows(features_path)
 
         all_fold_results = []
         scenarios = self.cfg.get("scenarios", {})
