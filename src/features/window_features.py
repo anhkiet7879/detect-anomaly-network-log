@@ -1,5 +1,5 @@
 """
-window_features.py — [H5] Đặc trưng theo cửa sổ 5 phút (tumbling window).
+window_features.py — [H5] Đặc trưng theo cửa sổ 5 phút (tumbling window) + [H6] xuất/nạp Parquet.
 
 Mỗi hàng đầu ra = 1 cửa sổ 5 phút. Cột:
   ts_epoch                 mốc ĐẦU cửa sổ (epoch giây UTC) — trùng tên timestamp_column của experiment.yaml
@@ -136,3 +136,36 @@ def feature_columns(windows, sets=("A", "B")):
     tpl = [c for c in windows.columns if c.startswith(("f_tpl_", "f_n_templates", "f_n_new_tpl", "f_n_rare_tpl"))]
     a = [c for c in windows.columns if c.startswith("f_") and c not in tpl]
     return (a if "A" in sets else []) + (tpl if "B" in sets else [])
+
+
+# ---------------------------------------------------------------- [H6] xuất / nạp file đặc trưng
+def build_set_a(lines, components=None, win_sec=WINDOW_SEC, fill_empty=True, source="bgl"):
+    """[H6] Chỉ bộ A (không cần Drain3) cho TOÀN BỘ dữ liệu — tính một lần, dùng chung cho mọi fold.
+    Bộ A không học gì từ dữ liệu (chỉ đếm), nên tính trên cả file không gây rò rỉ.
+    KHÔNG dùng hàm này cho bộ B: bộ B phải tính lại mỗi fold bằng build_fold_features()."""
+    lines = add_window_column(lines, win_sec)
+    if components is None:
+        components = sorted(lines["component"].unique())
+    idx = window_index(lines, win_sec, fill_empty)
+    w = base_features(lines, idx, components)
+    w.index.name = "ts_epoch"
+    w = w.reset_index()
+    w.insert(1, "ts_utc", pd.to_datetime(w["ts_epoch"], unit="s", utc=True).dt.strftime("%Y-%m-%dT%H:%M:%SZ"))
+    w.insert(2, "source", source)
+    front = ["ts_epoch", "ts_utc", "source", "y", "gt_alert_lines", "gt_alert_types"]
+    return w[front + [c for c in w.columns if c not in front]]
+
+
+def save_windows(windows, path):
+    """Ghi bảng cửa sổ theo đuôi file: .parquet (cần pyarrow) hoặc .csv."""
+    if str(path).lower().endswith(".parquet"):
+        windows.to_parquet(path, index=False)
+    else:
+        windows.to_csv(path, index=False)
+
+
+def load_windows(path):
+    """Đọc bảng cửa sổ theo đuôi file. Với CSV luôn keep_default_na=False để gt_alert_types rỗng không thành NaN."""
+    if str(path).lower().endswith(".parquet"):
+        return pd.read_parquet(path)
+    return pd.read_csv(path, keep_default_na=False)
