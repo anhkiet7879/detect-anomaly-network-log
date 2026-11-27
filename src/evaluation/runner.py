@@ -44,7 +44,8 @@ if PROJECT_ROOT not in sys.path:
 from src.evaluation.splitter import SplitFold, TimeSeriesDataSplitter
 from src.features.window_features import load_windows
 
-BASELINE_PREDICTION_COLUMNS = ["scenario", "fold", "ts_epoch", "y_true", "y_pred", "score"]
+BASELINE_PREDICTION_COLUMNS = ["scenario", "fold", "detector", "ts_epoch", "y_true", "y_pred", "score"]
+DEFAULT_PREDICTION_DETECTORS = frozenset({"Rule_FATAL", "Baseline_ZScore"})
 
 
 # ==============================================================================
@@ -281,6 +282,7 @@ class EvaluationRunner:
         detectors: Optional[Dict[str, BaseDetector]] = None,
         *,
         baseline_predictions: Optional[List[pd.DataFrame]] = None,
+        prediction_detectors: frozenset[str] = DEFAULT_PREDICTION_DETECTORS,
     ) -> pd.DataFrame:
         """Thực thi một kịch bản chia cụ thể trên toàn bộ detectors."""
         use_default_detectors = detectors is None
@@ -303,12 +305,13 @@ class EvaluationRunner:
                 det_model.fit(fold.train_df)
                 y_pred, scores = det_model.predict(fold.test_df)
 
-                if baseline_predictions is not None and det_name == "Baseline_ZScore":
+                if baseline_predictions is not None and det_name in prediction_detectors:
                     baseline_predictions.append(
                         pd.DataFrame(
                             {
                                 "scenario": scenario_name,
                                 "fold": fold.fold_idx,
+                                "detector": det_name,
                                 "ts_epoch": fold.test_df[self.splitter.timestamp_col].to_numpy(),
                                 "y_true": y_test,
                                 "y_pred": y_pred,
@@ -345,18 +348,33 @@ class EvaluationRunner:
             df = load_windows(features_path)
 
         all_fold_results = []
-        baseline_predictions = [] if self.cfg.get("output", {}).get("save_predictions", False) else None
+        output_cfg = self.cfg.get("output", {})
+        baseline_predictions = [] if output_cfg.get("save_predictions", False) else None
+        prediction_detectors = DEFAULT_PREDICTION_DETECTORS
+        if baseline_predictions is not None and "prediction_detectors" in output_cfg:
+            configured_detectors = output_cfg["prediction_detectors"]
+            if not isinstance(configured_detectors, list) or not all(
+                isinstance(name, str) and name for name in configured_detectors
+            ):
+                raise ValueError("output.prediction_detectors must be a list of detector names")
+            prediction_detectors = frozenset(configured_detectors)
         scenarios = self.cfg.get("scenarios", {})
 
         print(f"=== BẮT ĐẦU CHẠY ĐÁNH GIÁ ĐA KỊCH BẢN (TỔNG {len(scenarios)} SCENARIOS) ===")
         for sc_name, sc_cfg in scenarios.items():
             print(f"-> Đang thực thi kịch bản: {sc_name}...")
             df_sc = self.run_scenario(
-                df, sc_name, sc_cfg, baseline_predictions=baseline_predictions
+                df, sc_name, sc_cfg,
+                baseline_predictions=baseline_predictions,
+                prediction_detectors=prediction_detectors,
             )
             all_fold_results.append(df_sc)
 
         df_all = pd.concat(all_fold_results, ignore_index=True)
+        if baseline_predictions is not None and not df_all.empty:
+            unknown_detectors = prediction_detectors.difference(df_all["detector"])
+            if unknown_detectors:
+                raise ValueError(f"Unknown output.prediction_detectors: {', '.join(sorted(unknown_detectors))}")
 
         # Tính tổng hợp Mean ± Std cho từng detector qua các kịch bản
         summary_rows = []
