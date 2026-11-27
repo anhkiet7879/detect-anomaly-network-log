@@ -45,6 +45,7 @@ data/processed/*.parquet
 data/processed/*.csv
 !data/processed/bgl_episodes.csv
 data/features/*.csv
+/reports/evaluation/baseline_predictions.csv
 
 # Temporary logs & cache
 *.log
