@@ -19,6 +19,7 @@ import argparse
 import os
 import sys
 from abc import ABC, abstractmethod
+from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple, Type
 
 import numpy as np
@@ -85,10 +86,49 @@ class RuleFatalDetector(BaseDetector):
         return self
 
     def predict(self, test_df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
-        if self.fatal_col in test_df.columns:
-            scores = test_df[self.fatal_col].to_numpy(float)
-        else:
-            scores = np.zeros(len(test_df), dtype=float)
+        if self.fatal_col not in test_df.columns:
+            raise KeyError(f"Missing FATAL count column: {self.fatal_col}")
+
+        counts = test_df[self.fatal_col]
+        error = f"{self.fatal_col} must contain finite non-negative integer counts"
+        if not isinstance(counts, pd.Series):
+            raise ValueError(error)
+
+        if isinstance(counts.dtype, np.dtype) and counts.dtype.kind in ("i", "u"):
+            if (counts < 0).any():
+                raise ValueError(error)
+            # Above 2**53, only some integers are exactly representable as float64.
+            if (counts <= 2**53).all():
+                scores = counts.to_numpy(dtype=float)
+                return (scores > 0).astype(int), scores
+
+        precision_error = f"{self.fatal_col} contains a count not exactly representable as float"
+        scores = np.empty(len(counts), dtype=float)
+        for index, value in enumerate(counts):
+            if isinstance(value, (bool, np.bool_, np.timedelta64)):
+                raise ValueError(error)
+            if isinstance(value, (int, np.integer)):
+                count = int(value)
+            elif isinstance(value, (float, np.floating, Decimal)):
+                try:
+                    count, denominator = value.as_integer_ratio()
+                except (ValueError, OverflowError) as exc:
+                    raise ValueError(error) from exc
+                if denominator != 1:
+                    raise ValueError(error)
+            else:
+                raise ValueError(error)
+            if count < 0:
+                raise ValueError(error)
+
+            try:
+                score = float(count)
+            except OverflowError as exc:
+                raise ValueError(precision_error) from exc
+            if int(score) != count:
+                raise ValueError(precision_error)
+            scores[index] = score
+
         y_pred = (scores > 0).astype(int)
         return y_pred, scores
 
