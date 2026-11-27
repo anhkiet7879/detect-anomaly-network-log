@@ -43,6 +43,8 @@ def test_threshold_is_strict_and_feature_column_is_configurable():
                      1.4826 * math.sqrt(2) * math.log(11 / 6) / 3, id="std"),
         pytest.param([5, 5], math.log(6), 1.0, 1.4826, id="constant"),
         pytest.param([0, 0], 0.0, 1.0, 1.4826, id="all-zero"),
+        # The MAD is zero and the fallback std is below 1e-6.
+        # A scale of 1.0 avoids amplifying tiny variation, leaving the clipped log difference.
         pytest.param([1_000_000, 1_000_000, 1_000_001], math.log(1_000_001),
                      math.sqrt(2) * math.log1p(1 / 1_000_001) / 3, 1.0, id="tiny-std"),
     ],
