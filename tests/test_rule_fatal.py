@@ -5,12 +5,19 @@ import pandas as pd
 import pytest
 import yaml
 
-from mvp_step2_windows import build_windows
 from src.evaluation.runner import EvaluationRunner, RuleFatalDetector
+from src.features.window_features import build_set_a
 
 
-def test_predict_returns_labels_and_float_counts_in_row_order():
-    windows = pd.DataFrame({"f_sev_FATAL": [0, 1, 3]}, index=[8, 2, 5])
+@pytest.mark.parametrize("dtype", ["int8", "int64", "uint64"])
+def test_predict_returns_labels_and_float_counts_in_row_order(dtype, monkeypatch):
+    counts = pd.Series([0, 1, 3], index=[8, 2, 5], dtype=dtype)
+    windows = pd.DataFrame({"f_sev_FATAL": counts})
+
+    def reject_scalar_iteration(self):
+        pytest.fail("Standard integer counts should use the vectorized path")
+
+    monkeypatch.setattr(pd.Series, "__iter__", reject_scalar_iteration)
 
     labels, scores = RuleFatalDetector().predict(windows)
 
@@ -109,6 +116,19 @@ def test_predict_accepts_large_count_exactly_representable_as_float():
     assert int(scores[0]) == count
 
 
+@pytest.mark.parametrize("dtype", ["int64", "uint64"])
+def test_predict_checks_large_integer_counts_without_rounding(dtype):
+    counts = pd.Series([2**53, 2**53 + 1], dtype=dtype)
+    with pytest.raises(ValueError, match="not exactly representable as float"):
+        RuleFatalDetector().predict(pd.DataFrame({"f_sev_FATAL": counts}))
+
+
+def test_predict_rejects_missing_nullable_integer_count():
+    counts = pd.Series([1, pd.NA], dtype="Int64")
+    with pytest.raises(ValueError, match="finite non-negative integer counts"):
+        RuleFatalDetector().predict(pd.DataFrame({"f_sev_FATAL": counts}))
+
+
 def test_fit_is_stateless_and_does_not_modify_input():
     detector = RuleFatalDetector()
     train = pd.DataFrame({"f_sev_FATAL": [50, 0], "y": [1, 0]})
@@ -141,8 +161,7 @@ def test_window_counts_feed_registered_rule_in_scenario(tmp_path):
             "gt_alert_type": ["NORMAL", "ALERT", "NORMAL", "NORMAL", "ALERT", "NORMAL"],
         }
     )
-    windows = build_windows(logs, win_sec=300, components=[])
-    windows["y"] = (windows["gt_alert_lines"] > 0).astype(int)
+    windows = build_set_a(logs, win_sec=300, components=[])
     test_windows = windows.set_index("ts_epoch").loc[[8100, 8400, 8700, 9000]]
     assert test_windows["f_sev_FATAL"].tolist() == [2, 1, 0, 0]
     assert test_windows.loc[8700, "f_n_logs"] == 0

@@ -94,6 +94,14 @@ class RuleFatalDetector(BaseDetector):
         if not isinstance(counts, pd.Series):
             raise ValueError(error)
 
+        if isinstance(counts.dtype, np.dtype) and counts.dtype.kind in ("i", "u"):
+            if (counts < 0).any():
+                raise ValueError(error)
+            # Above 2**53, only some integers are exactly representable as float64.
+            if (counts <= 2**53).all():
+                scores = counts.to_numpy(dtype=float)
+                return (scores > 0).astype(int), scores
+
         precision_error = f"{self.fatal_col} contains a count not exactly representable as float"
         scores = np.empty(len(counts), dtype=float)
         for index, value in enumerate(counts):
